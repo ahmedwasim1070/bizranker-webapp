@@ -48,7 +48,7 @@ function Hero() {
 
                         {/*  */}
                         <div className="w-full flex flex-row items-center justify-center gap-x-2 my-2 md:px-0 xxs:px-4">
-                            <input type="search" placeholder="Search resturants , cafe or other buisnesses." className="md:w-2/4 xxs:w-full border border-primary rounded-xl px-2 py-3 placeholder:text-secondary outline-none text-secondary" aria-label="Search box" />
+                            <input type="search" placeholder="Search resturants , cafe or other buisnesses." className="md:w-2/3 xxs:w-full border border-primary rounded-xl px-2 py-3 placeholder:text-secondary outline-none text-secondary" aria-label="Search box" />
                             <button type="button" className="bg-secondary p-2 rounded-full border border-secondary hover:bg-transparent transition-colors cursor-pointer group" aria-label="Search">
                                 <Search className="w-7 h-7 text-primary group-hover:text-secondary" />
                             </button>
