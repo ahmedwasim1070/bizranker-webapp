@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Search } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
 import { getUserLocation } from "@/app/providers/LocationProvider";
+import AddBuisnessBtn from "./AddBuisnessBtn";
 
 // 
 function Hero() {
@@ -66,9 +67,7 @@ function Hero() {
                             </ul>
                         </nav>
 
-                        <button className="border border-primary text-primary bg-secondary rounded-xl px-4 py-2 my-3 cursor-pointer hover:bg-transparent transition-colors">
-                            <p>Add your Buisness.</p>
-                        </button>
+                        <AddBuisnessBtn />
 
                     </section>
                 </article>
