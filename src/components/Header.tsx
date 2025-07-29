@@ -7,11 +7,13 @@ import { getUserLocation } from "@/app/providers/LocationProvider";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, LocationEdit, AlignJustify } from "lucide-react";
+import { AreaProvider } from "@/app/providers/AreaProvider";
+import CityLister from "./CityLister";
 
 // 
 function Header() {
     const pathname = usePathname();
-    const { userLocation, selectedCity, setSelectedCity } = getUserLocation();
+    const { userLocation, setUserLocation, selectedCity, setSelectedCity } = getUserLocation();
     const navigationItems = [
         {
             href: '/top/world/profiles',
@@ -101,59 +103,9 @@ function Header() {
                             </li>
                         ))}
                         <li>
-                            <div
-                                className="relative flex flex-row items-center justify-center gap-x-1 cursor-pointer group"
-                                onClick={() => setListCity(!listCity)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault();
-                                        setListCity(!listCity);
-                                    }
-                                }}
-                                role="button"
-                                tabIndex={0}
-                                aria-expanded={listCity}
-                                aria-haspopup="listbox"
-                                aria-label={`Current location: ${selectedCity || userLocation?.defaultCity || userLocation?.capital}`}
-                            >
-                                <LocationEdit className="size-5 group-hover:text-primary transition-colors" />
-                                <span className="text-secondary transition-colors">
-                                    {selectedCity || userLocation?.defaultCity || userLocation?.capital}
-                                </span>
-                                {!listCity ? (
-                                    <ChevronDown className="w-5 h-5 text-secondary group-hover:text-primary transition-colors" />
-                                ) : (
-                                    <ChevronUp className="w-5 h-5 text-secondary group-hover:text-primary transition-colors" />
-                                )}
-                                <div className={`absolute flex flex-col gap-y-1 min-w-full ${listCity ? 'max-h-[70vh] border-x border-b bg-background py-2 shadow-lg' : 'h-0 bg-transparent'} right-0 top-6 z-10 rounded-b-xl border-secondary/20 overflow-x-hidden overflow-y-auto duration-300 transition-all`} role="listbox" aria-label="Select city">
-                                    {isFetchingCity &&
-                                        <div className="flex items-center justify-center h-10 space-x-1">
-                                            <span
-                                                className={`block w-3 h-3 rounded-full animate-bounce bg-primary`}
-                                                style={{ animationDelay: '0s' }}
-                                            />
-                                            <span
-                                                className={`block w-3 h-3 rounded-full animate-bounce bg-secondary`}
-                                                style={{ animationDelay: '0.2s' }}
-                                            />
-                                            <span
-                                                className={`block w-3 h-3 rounded-full animate-bounce bg-primary`}
-                                                style={{ animationDelay: '0.4s' }}
-                                            />
-                                        </div>
-                                    }
-                                    {cityListingError &&
-                                        <div className="p-4 text-red-500 text-sm" role="alert">
-                                            {cityListingError}
-                                        </div>
-                                    }
-                                    {!isFetchingCity && !cityListingError && cities && cities.map((city, idx) => (
-                                        <button className={` cursor-pointer py-1 ${selectedCity === city ? 'bg-secondary text-white' : 'text-primary hover:bg-secondary'}`} onClick={() => handleCitySelect(city)} key={idx} role="option" aria-selected={city === selectedCity} tabIndex={listCity ? 0 : -1}>
-                                            {city}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                            <AreaProvider>
+                                <CityLister setUserLocation={setUserLocation} />
+                            </AreaProvider>
                         </li>
                     </ul>
                 </nav>

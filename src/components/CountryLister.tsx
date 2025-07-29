@@ -8,7 +8,6 @@ import { LocationDataContext } from "@/middleware";
 
 // Type
 type CountryListerProps = {
-    userLocation: LocationDataContext | null;
     setUserLocation: (userLocation: LocationDataContext | null) => void;
 }
 
@@ -39,10 +38,10 @@ function CountryLister({ setUserLocation }: CountryListerProps) {
             setIsFetchingCountry(false);
         }
     }
-    const handleCountrySelection = async (country: string, countryCode: string) => {
+    const handleCountrySelection = async (country: string, countryCode: string, capital: string) => {
         if (locationPayload?.country !== country) {
-            setLocationPayload({ ...locationPayload, country, countryCode })
-            setUserLocation({ ...locationPayload, country, countryCode })
+            setLocationPayload({ ...locationPayload, country, countryCode, capital })
+            setUserLocation({ ...locationPayload, country, countryCode, capital })
         }
     }
 
@@ -103,7 +102,7 @@ function CountryLister({ setUserLocation }: CountryListerProps) {
                         }
                         {/* Countries */}
                         {countries && countries.map((country, idx) => (
-                            <button onClick={() => handleCountrySelection(country.name, country.code)} className={`w-full py-2 cursor-pointer text-secondary hover:bg-secondary hover:text-white ${locationPayload?.country === country.name && 'bg-secondary text-white'} `} key={idx} role="option" aria-selected={country === locationPayload?.country} tabIndex={listCountry ? 0 : -1}>
+                            <button onClick={() => handleCountrySelection(country.name, country.code, country.capital)} className={`w-full py-2 cursor-pointer text-secondary hover:bg-secondary hover:text-white ${locationPayload?.country === country.name && 'bg-secondary text-white'} `} key={idx} role="option" aria-selected={country === locationPayload?.country} tabIndex={listCountry ? 0 : -1}>
                                 {country.name}
                             </button>
                         ))}

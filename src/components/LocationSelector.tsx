@@ -1,11 +1,6 @@
-'use client';
-
 // Imports
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { getUserLocation } from "@/app/providers/LocationProvider";
-import { LocationDataContext } from "@/middleware";
 import { AreaProvider } from "@/app/providers/AreaProvider";
 // Components
 import CountryLister from "./CountryLister";
@@ -13,8 +8,7 @@ import CityLister from "./CityLister";
 
 // 
 function LocationSelector() {
-  const { setUserLocation } = getUserLocation();
-  const [locationPayload, setLocationPayload] = useState<LocationDataContext | null>(null);
+  const { userLocation, setUserLocation } = getUserLocation();
   const navigationItems = [
     {
       href: '/top/world/profiles',

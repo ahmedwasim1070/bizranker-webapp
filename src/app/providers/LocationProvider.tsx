@@ -66,7 +66,7 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
         fetchLiveLocation();
     }, []);
     useEffect(() => {
-        if (userLocation) {
+        if (userLocation?.country && userLocation.countryCode && userLocation.capital) {
             setIsLocationPrompt(false);
             const expires = new Date();
             expires.setDate(expires.getDate() + 1);

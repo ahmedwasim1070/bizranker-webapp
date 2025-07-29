@@ -8,7 +8,6 @@ import { LocationDataContext } from "@/middleware";
 
 // Type
 type CityListerProps = {
-    userLocation: LocationDataContext | null;
     setUserLocation: (userLocation: LocationDataContext | null) => void;
 }
 
@@ -47,7 +46,7 @@ function CityLister({ setUserLocation }: CityListerProps) {
     }
 
     useEffect(() => {
-        if (locationPayload?.countryCode) {
+        if (locationPayload?.countryCode && !cities || cities?.length === 0) {
             fetchCities();
         }
     }, [locationPayload])

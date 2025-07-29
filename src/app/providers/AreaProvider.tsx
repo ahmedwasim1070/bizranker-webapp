@@ -3,6 +3,7 @@
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { LocationDataContext } from "@/middleware";
+import { getUserLocation } from "./LocationProvider";
 
 // Interfaces
 interface AreaContextType {
@@ -18,8 +19,15 @@ const AreaContext = createContext<AreaContextType | undefined>(undefined);
 
 // 
 export function AreaProvider({ children }: AreaProviderProps) {
+    const { setUserLocation } = getUserLocation();
     const [locationPayload, setLocationPayload] = useState<LocationDataContext | null>(null);
 
+    useEffect(() => {
+        if (locationPayload) {
+            setUserLocation(locationPayload);
+        }
+
+    }, [locationPayload])
     return (
         <AreaContext.Provider value={{ locationPayload, setLocationPayload }}>
             {children}
