@@ -1,5 +1,7 @@
 // Imports
+import AreaSelectorProvider from "@/app/providers/AreaSelectorProvider";
 import Link from "next/link";
+import CountryLister from "./CountryLister";
 // Components
 
 // 
@@ -23,6 +25,11 @@ function LocationSelector() {
         <p className="text-secondary text-lg font-semibold">Select Manually.</p>
 
         <form className="flex flex-row space-x-4 items-center justify-center">
+
+          {/*  */}
+          <AreaSelectorProvider>
+            <CountryLister />
+          </AreaSelectorProvider>
 
         </form>
 
