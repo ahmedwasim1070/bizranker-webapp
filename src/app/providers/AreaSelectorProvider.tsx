@@ -17,7 +17,7 @@ interface AreaSelectorProviderProps {
     children: ReactNode;
 }
 // Types
-type selectedCountryDataPayload = {
+export type selectedCountryDataPayload = {
     country: string,
     countryCode: string,
     capital: string,
