@@ -1,14 +1,9 @@
 // Imports
 import Link from "next/link";
-import { getUserLocation } from "@/app/providers/LocationProvider";
-import { AreaProvider } from "@/app/providers/AreaProvider";
 // Components
-import CountryLister from "./CountryLister";
-import CityLister from "./CityLister";
 
 // 
 function LocationSelector() {
-  const { userLocation, setUserLocation } = getUserLocation();
   const navigationItems = [
     {
       href: '/top/world/profiles',
@@ -28,16 +23,6 @@ function LocationSelector() {
         <p className="text-secondary text-lg font-semibold">Select Manually.</p>
 
         <form className="flex flex-row space-x-4 items-center justify-center">
-
-          {/*  */}
-          <AreaProvider>
-            {/*  */}
-            <CountryLister setUserLocation={setUserLocation} />
-
-            {/*  */}
-            <CityLister setUserLocation={setUserLocation} />
-
-          </AreaProvider>
 
         </form>
 

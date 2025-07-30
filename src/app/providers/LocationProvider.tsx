@@ -80,7 +80,7 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
     return (
         <LocationContext.Provider value={{ userLocation, setUserLocation, selectedCity, setSelectedCity, setIsAddBuisness }}>
             {/*  */}
-            {isLocationPrompt && <LocationSelector />}
+            {true && <LocationSelector />}
 
             {/*  */}
             {isAddBuisness && <AddBuisness />}
@@ -90,7 +90,7 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
     );
 }
 
-// Hook to use location context
+// Hook to use context
 export const getUserLocation = (): LocationContextType => {
     const context = useContext(LocationContext);
     if (context === undefined) {

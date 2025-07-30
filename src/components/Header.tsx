@@ -3,17 +3,13 @@
 // Imports
 import Link from "next/link";
 import Image from "next/image";
-import { getUserLocation } from "@/app/providers/LocationProvider";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, LocationEdit, AlignJustify } from "lucide-react";
-import { AreaProvider } from "@/app/providers/AreaProvider";
-import CityLister from "./CityLister";
+import { useState } from "react";
+import { AlignJustify } from "lucide-react";
 
 // 
 function Header() {
     const pathname = usePathname();
-    const { userLocation, setUserLocation, selectedCity, setSelectedCity } = getUserLocation();
     const navigationItems = [
         {
             href: '/top/world/profiles',
@@ -26,46 +22,7 @@ function Header() {
             isActive: pathname === '/top/country/profiles',
         }
     ]
-    const [isFetchingCity, setIsFetchingCity] = useState<boolean>(false);
-    const [cityListingError, setCityListingError] = useState<string | null>(null);
-    const [listCity, setListCity] = useState<boolean>(false);
-    const [cities, setCities] = useState<string[] | null>(null);
     const [expandNav, setExnapadNav] = useState<boolean>(false);
-
-    const handleCitySelect = (city: string) => {
-        setSelectedCity(city);
-    }
-    const fetchCity = async () => {
-        if (!userLocation) {
-            setCityListingError("Error while fetching cities");
-            return;
-        };
-        if (cities) return;
-
-        setIsFetchingCity(true);
-        setCityListingError(null);
-        try {
-            const response = await fetch(`/api/geonames/?countryCode=${userLocation?.countryCode}`)
-            if (!response.ok) {
-                setCityListingError("Error while fetching cities");
-                throw new Error(`Failed to fetch cities ${response.status}`);
-            }
-
-            const data = await response.json();
-            setCities(data);
-        } catch (error) {
-            setCityListingError("Error while fetching cities");
-            console.error("Error while fetching cities", error);
-        } finally {
-            setIsFetchingCity(false);
-        }
-    }
-
-    useEffect(() => {
-        if (listCity && !cities) {
-            fetchCity();
-        }
-    }, [listCity])
 
     return (
         <>
@@ -103,9 +60,6 @@ function Header() {
                             </li>
                         ))}
                         <li>
-                            <AreaProvider>
-                                <CityLister setUserLocation={setUserLocation} />
-                            </AreaProvider>
                         </li>
                     </ul>
                 </nav>

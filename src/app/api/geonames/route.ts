@@ -25,7 +25,6 @@ export async function GET(request: Request) {
     const response = await fetch(
       `http://api.geonames.org/searchJSON?country=${countryCode}&featureClass=P&orderby=population&maxRows=100&username=${process.env.GEONAME_USERNAME}`
     );
-    console.log("Fetching form url", response);
     if (!response.ok) {
       return NextResponse.json(
         { error: "Failed to fetch data from GEONAMES API" },
