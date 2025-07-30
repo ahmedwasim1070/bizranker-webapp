@@ -4,9 +4,14 @@
 import Image from "next/image";
 import { X } from "lucide-react";
 import { getUserLocation } from "@/app/providers/LocationProvider";
+import AreaSelectorProvider from "@/app/providers/AreaSelectorProvider";
+// Components
+import CountryLister from "./CountryLister";
+import CityLister from "./CityLister";
 
 function AddBuisness() {
     const { setIsAddBuisness } = getUserLocation();
+
     return (
         <>
             <section className="fixed inset-0 flex items-center justify-center z-50 bg-background/80 backdrop-blur-sm p-4">
@@ -51,7 +56,11 @@ function AddBuisness() {
                                     <input className="border border-secondary text-secondary rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-secondary transition-all placeholder:text-primary" name="buisnessName" type="text" placeholder="Buisness name" />
                                 </div>
 
-                                <div className="flex flex-row items-center gap-x-2">
+                                <div className="flex flex-row items-center gap-x-2 overflow-y-clip">
+                                    <AreaSelectorProvider>
+                                        <CountryLister />
+                                        <CityLister />
+                                    </AreaSelectorProvider>
                                 </div>
 
                             </div>

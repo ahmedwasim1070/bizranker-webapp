@@ -51,10 +51,9 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
                 }
             },
             (err) => {
-                console.error("Geolocation permission error:", err.message);
+                console.error("location permission error:", err.message);
             },
             {
-                enableHighAccuracy: true,
                 timeout: 50000,
                 maximumAge: 0,
             }
@@ -66,12 +65,13 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
         fetchLiveLocation();
     }, []);
     useEffect(() => {
-        if (userLocation?.country && userLocation.countryCode && userLocation.capital) {
+        if (userLocation) {
             setIsLocationPrompt(false);
             const expires = new Date();
             expires.setDate(expires.getDate() + 1);
 
             document.cookie = `user_location=${JSON.stringify(userLocation)}; expires=${expires.toUTCString()}; path=/`;
+            setIsLocationPrompt(false);
         } else {
             setIsLocationPrompt(true);
         }
@@ -80,7 +80,7 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
     return (
         <LocationContext.Provider value={{ userLocation, setUserLocation, selectedCity, setSelectedCity, setIsAddBuisness }}>
             {/*  */}
-            {true && <LocationSelector />}
+            {isLocationPrompt && <LocationSelector />}
 
             {/*  */}
             {isAddBuisness && <AddBuisness />}

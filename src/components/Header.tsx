@@ -6,6 +6,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AlignJustify } from "lucide-react";
+import AreaSelectorProvider from "@/app/providers/AreaSelectorProvider";
+import CityLister from "./CityLister";
 
 // 
 function Header() {
@@ -60,6 +62,9 @@ function Header() {
                             </li>
                         ))}
                         <li>
+                            <AreaSelectorProvider>
+                                <CityLister customSelectCss="border-none text-primary cursor-pointer hover:text-secondary bg-background rounded-xl focus:ring-2 focus:ring-secondary px-2" />
+                            </AreaSelectorProvider>
                         </li>
                     </ul>
                 </nav>

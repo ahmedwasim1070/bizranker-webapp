@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 type LocationDataContext = {
   country: string;
   countryCode: string;
-  capital?: string;
+  capital: string;
   defaultCity?: string;
 };
 

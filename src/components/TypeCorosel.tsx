@@ -22,7 +22,6 @@ function TypeCorosel() {
             console.error('Error fetching business types:', error);
         }
     }
-
     const renderIcon = (iconName: string, className: string) => {
         const IconComponent = buisnessTypeIcons[iconName];
         return IconComponent ? <IconComponent className={className} /> : null;
