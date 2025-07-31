@@ -3,6 +3,7 @@
 // Imports
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from 'framer-motion';
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AlignJustify, Locate, LocateIcon, LocationEdit } from "lucide-react";
@@ -28,11 +29,21 @@ function Header() {
 
     return (
         <>
-            <header id="header" role="banner" className={`bg-background min-w-screen md:h-auto ${expandNav ? 'xxs:h-50' : 'xxs:h-22'}  grid items-center justify-between md:grid-flow-col xxs:grid-flex-row grid-row-1 md:px-6 xxs:px-0 py-6 duration-200`}>
+            <motion.header
+                id="header" role="banner" className={`bg-background min-w-screen md:h-auto ${expandNav ? 'xxs:h-50' : 'xxs:h-22'}  grid items-center justify-between md:grid-flow-col xxs:grid-flex-row grid-row-1 md:px-6 xxs:px-0 py-6 duration-200`}
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, scale: 1, opacity: 1 }}
+                transition={{ duration: 0.1 }}
+            >
                 {/*  */}
                 <div className="md:min-w-auto xxs:min-w-screen md:px-0 xxs:px-4 flex items-center justify-between">
                     {/*  */}
-                    <div id="logo" className="shrink-0">
+                    <motion.div
+                        id="logo" className="shrink-0"
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 0, scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
                         <Link href="/" area-label="Bizranker Buisness Directory Home">
                             <Image
                                 src='/main-logo.svg'
@@ -42,17 +53,27 @@ function Header() {
                                 className="hover:opacity-80 transition-opacity"
                             />
                         </Link>
-                    </div>
+                    </motion.div>
 
                     {/*  */}
-                    <button onClick={() => setExnapadNav(!expandNav)} className="md:hidden xxs:block p-2 bg-primary rounded-lg border border-secondary/50 hover:bg-transparent transition-colors cursor-pointer">
+                    <motion.button
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 0, scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        onClick={() => setExnapadNav(!expandNav)} className="md:hidden xxs:block p-2 bg-primary rounded-lg border border-secondary/50 hover:bg-transparent transition-colors cursor-pointer"
+                    >
                         <AlignJustify className="w-6 h-6 text-secondary" />
-                    </button>
+                    </motion.button>
 
                 </div>
 
                 {/*  */}
-                <nav id="navbar" role="navigation" area-label="Main navigation" className={`md:block ${expandNav ? "xxs:block" : "xxs:hidden"}`}>
+                <motion.nav
+                    id="navbar" role="navigation" area-label="Main navigation" className={`md:block ${expandNav ? "xxs:block" : "xxs:hidden"}`}
+                    initial={{ y: -100, opacity: 0 }}
+                    animate={{ y: 0, scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                >
                     <ul className="w-auto flex md:flex-row xxs:flex-col space-x-6 md:space-y-0 xxs:space-y-4 md:py-0 xxs:py-4 font-bold ">
                         {navigationItems.map((item, idx) => (
                             <li key={idx} className="list-none text-center">
@@ -70,9 +91,9 @@ function Header() {
                             </AreaSelectorProvider>
                         </li>
                     </ul>
-                </nav>
+                </motion.nav>
 
-            </header>
+            </motion.header>
         </>
     )
 }

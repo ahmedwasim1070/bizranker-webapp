@@ -79,7 +79,7 @@ function BuisnessTypeCorosel() {
     // 
     return (
         <>
-            <section className="min-w-screen h-10 flex flex-row items-center my-10 px-2 xxs:px-4">
+            <section className="min-w-screen h-10 flex flex-row items-center py-10 px-2 xxs:px-4 bg-white">
                 <button
                     onClick={() => handleScroll("prev")}
                     className="bg-primary rounded-full p-1 xxs:p-2 border border-primary transition-colors hover:bg-transparent cursor-pointer"
