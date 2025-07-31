@@ -3,7 +3,7 @@
 // Imports
 // Components
 import Hero from "@/components/Hero";
-import TypeCorosel from "@/components/TypeCorosel";
+import BuisnessTypeCorosel from "@/components/BuisnessTypeCorosel";
 
 // 
 function Home() {
@@ -12,7 +12,7 @@ function Home() {
 		<>
 			<section>
 				<Hero />
-				<TypeCorosel />
+				<BuisnessTypeCorosel />
 			</section>
 		</>
 	)

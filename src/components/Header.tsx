@@ -45,7 +45,7 @@ function Header() {
                     </div>
 
                     {/*  */}
-                    <button onClick={() => setExnapadNav(!expandNav)} className="md:hidden xxs:block p-2 bg-primary rounded-xl border border-secondary/50 hover:bg-transparent transition-colors cursor-pointer">
+                    <button onClick={() => setExnapadNav(!expandNav)} className="md:hidden xxs:block p-2 bg-primary rounded-lg border border-secondary/50 hover:bg-transparent transition-colors cursor-pointer">
                         <AlignJustify className="w-6 h-6 text-secondary" />
                     </button>
 
@@ -53,20 +53,20 @@ function Header() {
 
                 {/*  */}
                 <nav id="navbar" role="navigation" area-label="Main navigation" className={`md:block ${expandNav ? "xxs:block" : "xxs:hidden"}`}>
-                    <ul className="w-auto flex md:flex-row xxs:flex-col space-x-6 md:space-y-0 xxs:space-y-4 md:py-0 xxs:py-4 font-semibold text-secondary">
+                    <ul className="w-auto flex md:flex-row xxs:flex-col space-x-6 md:space-y-0 xxs:space-y-4 md:py-0 xxs:py-4 font-bold ">
                         {navigationItems.map((item, idx) => (
                             <li key={idx} className="list-none text-center">
-                                <Link className={`underline-animation translate-x-full hover:text-secondary duration-100 ${item.isActive ? 'text-secondary' : 'text-primary'}`} href={item.href} title={item.label} aria-current={item.isActive ? 'page' : undefined}>
+                                <Link className={`underline-animation translate-x-full hover:text-primary duration-100 ${item.isActive ? 'text-primary' : 'text-secondary'}`} href={item.href} title={item.label} aria-current={item.isActive ? 'page' : undefined}>
                                     {item.label}
                                 </Link>
                             </li>
                         ))}
                         <li className="flex flex-row  items-center group">
                             <span>
-                                <LocationEdit className="w-5 h-5 text-primary group-hover:text-secondary" />
+                                <LocationEdit className="w-5 h-5 text-secondary group-hover:text-primary" />
                             </span>
                             <AreaSelectorProvider>
-                                <CityLister customSelectCss="w-40 border-none text-primary cursor-pointer group-hover:text-secondary bg-background rounded-xl px-2" />
+                                <CityLister customSelectCss="w-40 border-none text-secondary cursor-pointer group-hover:text-primary bg-background rounded-xl px-2" />
                             </AreaSelectorProvider>
                         </li>
                     </ul>

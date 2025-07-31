@@ -37,15 +37,15 @@ function Footer() {
 
     return (
         <>
-            <footer id="footer" className="min-w-screen bg-background border-t border-primary/20 py-14">
-                <div className="flex md:flex-row xxs:flex-col md:gap-y-0 xxs:gap-y-14 items-center justify-around">
+            <footer id="footer" className="min-w-screen bg-gradient-to-t from-background to-white border-b-2 border-secondary py-18 px-18">
+                <div className="flex md:flex-row xxs:flex-col md:gap-y-0 xxs:gap-y-14 items-center justify-between">
 
                     {/*  */}
                     <section>
                         <nav>
                             <ul className="space-y-2">
                                 {primaryNavigationItems.map((item, idx) => (
-                                    <li key={idx} className="text-secondary 2xl:text-md lg:text-sm transition-colors decoration-primary hover:text-primary hover:decoration-secondary">
+                                    <li key={idx} className="text-primary font-semibold 2xl:text-md lg:text-sm transition-colors decoration-secondary hover:text-secondary hover:decoration-primary">
                                         <Link href={item.href} className="underline">{item.label}</Link>
                                     </li>
                                 ))}
@@ -64,7 +64,7 @@ function Footer() {
                                 className="hover:opacity-80 transition-opacity"
                             />
                         </Link>
-                        <h6 className="text-primary text-lg ">Ranking Buisnesses</h6>
+                        <h6 className="text-secondary text-xl font-semibold ">Ranking Buisnesses</h6>
                     </section>
 
                     {/*  */}
@@ -72,7 +72,7 @@ function Footer() {
                         <nav>
                             <ul className="space-y-2 md:text-right xxs:text-left">
                                 {secondaryNavigationItems.map((item, idx) => (
-                                    <li key={idx} className={`2xl:text-md lg:text-sm transition-colors decoration-primary hover:text-primary hover:decoration-secondary ${item.isActive ? 'text-primary' : 'text-secondary'}`}>
+                                    <li key={idx} className={`2xl:text-md lg:text-sm  font-semibold transition-colors decoration-secondary hover:text-secondary hover:decoration-primary ${item.isActive ? 'text-secondary' : 'text-primary'}`}>
                                         <Link href={item.href} className="underline">{item.label}</Link>
                                     </li>
                                 ))}

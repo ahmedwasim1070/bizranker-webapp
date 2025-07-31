@@ -1,11 +1,10 @@
 // Imports
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { buisnessTypeIcons } from "@/utils/buisnessTypeIcon";
 import { animate } from "framer-motion";
 
 // 
-function TypeCorosel() {
+function BuisnessTypeCorosel() {
     const sliderRef = useRef(null);
     const [buisnessType, setBuisnessType] = useState<any[] | null>(null);
 
@@ -21,10 +20,6 @@ function TypeCorosel() {
         } catch (error) {
             console.error('Error fetching business types:', error);
         }
-    }
-    const renderIcon = (iconName: string, className: string) => {
-        const IconComponent = buisnessTypeIcons[iconName];
-        return IconComponent ? <IconComponent className={className} /> : null;
     }
     const handleScroll = (direction: string) => {
         const slider = sliderRef.current as HTMLElement | null;
@@ -84,40 +79,37 @@ function TypeCorosel() {
     // 
     return (
         <>
-            <section className="min-w-screen h-10 flex flex-row items-center my-10 px-2 xs:px-4">
+            <section className="min-w-screen h-10 flex flex-row items-center my-10 px-2 xxs:px-4">
                 <button
                     onClick={() => handleScroll("prev")}
-                    className="bg-secondary rounded-full p-1 xs:p-2 border border-secondary transition-colors hover:bg-white cursor-pointer"
+                    className="bg-primary rounded-full p-1 xxs:p-2 border border-primary transition-colors hover:bg-transparent cursor-pointer"
                 >
-                    <ChevronLeft className="w-6 h-6 xs:w-8 xs:h-8 text-primary" />
+                    <ChevronLeft className="w-6 h-6 xxs:w-8 xxs:h-8 text-secondary" />
                 </button>
 
                 <div
                     ref={sliderRef}
-                    className="w-full flex flex-row gap-x-1 xs:gap-x-2 overflow-x-scroll mx-1 xs:mx-2 rounded-xl scrollbar-hidden"
+                    className="w-full flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
                 >
                     {buisnessType && buisnessType.map((buisness, idx) => (
                         <div
                             key={idx}
-                            className="flex flex-row items-center gap-x-1 xs:gap-x-2 border border-secondary bg-background rounded-full px-1 xs:px-2 py-1 xs:py-2 text-nowrap cursor-pointer group transition-colors hover:bg-transparent"
+                            className="flex flex-row items-center gap-x-1 xxs:gap-x-2 border border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap cursor-pointer group transition-colors hover:bg-transparent"
                         >
-                            <span className="p-1 xs:p-2 rounded-full border border-secondary bg-primary group-hover:bg-secondary">
-                                {renderIcon(buisness.icon, `w-4 h-4 xs:w-5 xs:h-5 text-secondary group-hover:text-primary`)}
-                            </span>
-                            <p className="text-secondary font-semibold text-xs xs:text-base">{buisness.type}</p>
+                            <p className="text-white group-hover:text-secondary font-semibold text-xxs xxs:text-base">{buisness.type}</p>
                         </div>
                     ))}
                 </div>
 
                 <button
                     onClick={() => handleScroll("next")}
-                    className="bg-secondary rounded-full p-1 xs:p-2 border border-secondary transition-colors hover:bg-white cursor-pointer"
+                    className="bg-primary rounded-full p-1 xxs:p-2 border border-primary transition-colors hover:bg-transparent cursor-pointer"
                 >
-                    <ChevronRight className="w-6 h-6 xs:w-8 xs:h-8 text-primary" />
+                    <ChevronRight className="w-6 h-6 xxs:w-8 xxs:h-8 text-secondary" />
                 </button>
             </section>
         </>
     )
 }
 
-export default TypeCorosel;
+export default BuisnessTypeCorosel;

@@ -10,11 +10,9 @@ function AddBuisnessBtn() {
     return (
         <>
             <section className="min-w-full pt-4 flex item-center justify-center">
-                <button onClick={() => setIsAddBuisness(true)} type="button" className="flex flex-row items-center group gap-x-2 p-2 bg-background text-center rounded-full border border-secondary cursor-pointer hover:bg-transparent transition-colors">
-                    <span className="border border-secondary bg-primary p-2 rounded-full group-hover:bg-secondary">
-                        <BriefcaseBusiness className="w-4.5 h-4.5 text-secondary group-hover:text-primary" />
-                    </span>
-                    <p className="text-secondary font-semibold">Add your Buisness</p>
+                <button onClick={() => setIsAddBuisness(true)} type="button" className="flex flex-row items-center group gap-x-3 px-4 py-2 bg-primary text-center rounded-lg border border-primary cursor-pointer hover:bg-transparent transition-colors">
+                    <BriefcaseBusiness className="w-6 h-6 text-secondary" />
+                    <p className="text-white text-lg font-semibold group-hover:text-secondary">Add Your Buisness</p>
                 </button>
             </section>
         </>
