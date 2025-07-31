@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { AlignJustify } from "lucide-react";
+import { AlignJustify, Locate, LocateIcon, LocationEdit } from "lucide-react";
 import AreaSelectorProvider from "@/app/providers/AreaSelectorProvider";
 import CityLister from "./CityLister";
 
@@ -61,9 +61,12 @@ function Header() {
                                 </Link>
                             </li>
                         ))}
-                        <li>
+                        <li className="flex flex-row  items-center group">
+                            <span>
+                                <LocationEdit className="w-5 h-5 text-primary group-hover:text-secondary" />
+                            </span>
                             <AreaSelectorProvider>
-                                <CityLister customSelectCss="border-none text-primary cursor-pointer hover:text-secondary bg-background rounded-xl focus:ring-2 focus:ring-secondary px-2" />
+                                <CityLister customSelectCss="w-40 border-none text-primary cursor-pointer group-hover:text-secondary bg-background rounded-xl px-2" />
                             </AreaSelectorProvider>
                         </li>
                     </ul>

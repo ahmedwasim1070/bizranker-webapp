@@ -5,7 +5,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { LocationDataContext } from "@/middleware";
 // Components
 import LocationSelector from "@/components/LocationSelector";
-import AddBuisness from "@/components/AddBuisness";
+import AddBuisnessManually from "@/components/AddBuisnessManually";
 
 // Interfaces
 interface LocationContextType {
@@ -83,7 +83,7 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
             {isLocationPrompt && <LocationSelector />}
 
             {/*  */}
-            {isAddBuisness && <AddBuisness />}
+            {isAddBuisness && <AddBuisnessManually />}
 
             {children}
         </LocationContext.Provider>

@@ -3,7 +3,6 @@ import AreaSelectorProvider from "@/app/providers/AreaSelectorProvider";
 import Link from "next/link";
 // Components
 import CountryLister from "./CountryLister";
-import CityLister from "./CityLister";
 
 // 
 function LocationSelector() {

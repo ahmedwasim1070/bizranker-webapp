@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(
-      `http://api.geonames.org/searchJSON?country=${countryCode}&featureClass=P&orderby=population&maxRows=100&username=${process.env.GEONAME_USERNAME}`
+      `http://api.geonames.org/searchJSON?country=${countryCode}&featureClass=P&orderby=population&maxRows=150&username=${process.env.GEONAME_USERNAME}`
     );
     if (!response.ok) {
       return NextResponse.json(

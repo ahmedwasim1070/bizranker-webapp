@@ -62,17 +62,16 @@ function CityLister({ customSelectCss }: CityListerProps) {
 
     return (
         <select
+            value={selectedCity || selectedCountryCapital}
             className={`${customSelectCss ? customSelectCss : 'border border-secondary cursor-pointer text-white bg-secondary font-semibold rounded-xl p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all'}`}
             disabled={isFetching || !!fetchingError || !cities}
             onChange={handleSelect}
         >
 
-            {!selectedCountryCapital ?
+            {!selectedCountryCapital &&
                 <option disabled hidden>
                     Select Country
                 </option>
-                :
-                <option className="font-[Poppins]" value={selectedCity || selectedCountryCapital} >{selectedCity || selectedCountryCapital}</option>
             }
 
             {isFetching && (
@@ -83,11 +82,17 @@ function CityLister({ customSelectCss }: CityListerProps) {
                 <option className="text-red-500 bg-secondary" hidden>{fetchingError}</option>
             )}
 
-            {cities && cities.length > 0 && cities.map((city, idx) => (
-                <option key={idx} value={city} className="font-[Poppins]">
-                    {city}
-                </option>
-            ))}
+            {cities && cities?.length > 0 && cities.map((city, idx) => {
+                if (selectedCountryCapital || selectedCity !== city) {
+                    return (
+                        <option key={idx} value={city} className="font-[Poppins]">
+                            {city}
+                        </option>
+                    );
+                }
+                return null;
+            })}
+
         </select>
     );
 }
