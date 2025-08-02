@@ -70,7 +70,7 @@ function CountryLister() {
                 <option
                     key={idx}
                     value={JSON.stringify(country)}
-                    className="font-[Poppins]"
+                    className="font-poppin font-semibold"
                 >
                     {country.country}
                 </option>

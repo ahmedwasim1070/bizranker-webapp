@@ -23,6 +23,7 @@
 }
 
 @theme {
+  --font-poppin: "Poppins";
   --color-primary: #fe7743;
   --color-secondary: #273f4f;
   --color-background: #efeeea;

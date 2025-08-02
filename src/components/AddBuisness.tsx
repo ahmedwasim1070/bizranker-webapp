@@ -43,25 +43,30 @@ const AddBusiness: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setError('');
-
         if (!googleLink.trim()) {
             setError('Please enter a Google Business Profile link');
             return;
         }
-
         if (!validateGoogleBusinessLink(googleLink)) {
             setError('Please enter a valid Google Business Profile link');
             return;
         }
-
         setIsLoading(true);
+        try {
+            const response = await fetch(`/api/scrape-buisness/?url=${googleLink}`);
+            if (!response.ok) {
+                setError("Error while fetching profile data.");
+                throw new Error("Failed to fetch cities.");
+            }
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Google Business Profile Link:', googleLink);
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            setError("Unkown Error occured.");
+            console.error("Failed to fetch cities.", error);
+        } finally {
             setIsLoading(false);
-            setGoogleLink('');
-        }, 2000);
+        }
     };
 
     const LoadingDots: React.FC = () => (

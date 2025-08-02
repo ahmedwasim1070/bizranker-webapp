@@ -82,16 +82,11 @@ function CityLister({ customSelectCss }: CityListerProps) {
                 <option className="text-red-500 bg-secondary" hidden>{fetchingError}</option>
             )}
 
-            {cities && cities?.length > 0 && cities.map((city, idx) => {
-                if (selectedCountryCapital || selectedCity !== city) {
-                    return (
-                        <option key={idx} value={city} className="font-[Poppins]">
-                            {city}
-                        </option>
-                    );
-                }
-                return null;
-            })}
+            {cities && cities?.length > 0 && cities.map((city, idx) => (
+                <option key={idx} value={city} className="font-poppin font-semibold ">
+                    {city}
+                </option>
+            ))}
 
         </select>
     );

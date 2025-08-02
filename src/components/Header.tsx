@@ -38,11 +38,8 @@ function Header() {
                 {/*  */}
                 <div className="md:min-w-auto xxs:min-w-screen md:px-0 xxs:px-4 flex items-center justify-between">
                     {/*  */}
-                    <motion.div
+                    <div
                         id="logo" className="shrink-0"
-                        initial={{ y: -100, opacity: 0 }}
-                        animate={{ y: 0, scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5 }}
                     >
                         <Link href="/" area-label="Bizranker Buisness Directory Home">
                             <Image
@@ -53,26 +50,20 @@ function Header() {
                                 className="hover:opacity-80 transition-opacity"
                             />
                         </Link>
-                    </motion.div>
+                    </div>
 
                     {/*  */}
-                    <motion.button
-                        initial={{ y: -100, opacity: 0 }}
-                        animate={{ y: 0, scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5 }}
+                    <button
                         onClick={() => setExnapadNav(!expandNav)} className="md:hidden xxs:block p-2 bg-primary rounded-lg border border-secondary/50 hover:bg-transparent transition-colors cursor-pointer"
                     >
                         <AlignJustify className="w-6 h-6 text-secondary" />
-                    </motion.button>
+                    </button>
 
                 </div>
 
                 {/*  */}
-                <motion.nav
+                <nav
                     id="navbar" role="navigation" area-label="Main navigation" className={`md:block ${expandNav ? "xxs:block" : "xxs:hidden"}`}
-                    initial={{ y: -100, opacity: 0 }}
-                    animate={{ y: 0, scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.5 }}
                 >
                     <ul className="w-auto flex md:flex-row xxs:flex-col space-x-6 md:space-y-0 xxs:space-y-4 md:py-0 xxs:py-4 font-bold ">
                         {navigationItems.map((item, idx) => (
@@ -91,7 +82,7 @@ function Header() {
                             </AreaSelectorProvider>
                         </li>
                     </ul>
-                </motion.nav>
+                </nav>
 
             </motion.header>
         </>

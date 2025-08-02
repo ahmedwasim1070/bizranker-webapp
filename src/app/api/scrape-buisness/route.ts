@@ -1,4 +1,7 @@
 // app/api/scrape-business/route.ts
+
+// Add the stealth plugin
+
 import puppeteer, { Browser, Page } from "puppeteer";
 import { NextRequest } from "next/server";
 
@@ -10,15 +13,15 @@ interface BusinessData {
   reviewCount: number | null;
   rating: number | null;
   profileImage: string | null;
+  address: string | null;
+  hours: string | null;
+  plusCode: string | null;
 }
 
-interface RequestBody {
-  url: string;
-}
-
-export async function POST(request: NextRequest): Promise<Response> {
+export async function GET(request: NextRequest): Promise<Response> {
   try {
-    const { url }: RequestBody = await request.json();
+    const { searchParams } = new URL(request.url);
+    const url = searchParams.get("url");
 
     if (!url) {
       return Response.json({ error: "URL is required" }, { status: 400 });
@@ -33,6 +36,17 @@ export async function POST(request: NextRequest): Promise<Response> {
     }
 
     const businessData = await scrapeGoogleMapsBusiness(url);
+
+    // Fixed the logic here - was returning error when data was found
+    if (!businessData) {
+      console.error("No data found!");
+      return Response.json(
+        {
+          error: "No data found!",
+        },
+        { status: 404 }
+      );
+    }
 
     return Response.json({
       success: true,
@@ -50,13 +64,15 @@ export async function POST(request: NextRequest): Promise<Response> {
   }
 }
 
-async function scrapeGoogleMapsBusiness(url: string): Promise<BusinessData> {
+const scrapeGoogleMapsBusiness = async (
+  url: string
+): Promise<BusinessData | null> => {
   let browser: Browser | null = null;
+  let page: Page | null = null;
 
   try {
-    // Launch browser with optimized settings
     browser = await puppeteer.launch({
-      headless: "new",
+      headless: false, // Use new headless mode
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -67,182 +83,139 @@ async function scrapeGoogleMapsBusiness(url: string): Promise<BusinessData> {
         "--disable-gpu",
         "--disable-web-security",
         "--disable-features=VizDisplayCompositor",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding",
+        "--lang=en-US,en",
+        "--window-size=1366,768",
       ],
     });
 
-    const page: Page = await browser.newPage();
-
-    // Set viewport and user agent
+    page = await browser.newPage();
     await page.setViewport({ width: 1366, height: 768 });
     await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     );
 
-    // Block unnecessary resources to speed up loading
-    await page.setRequestInterception(true);
-    page.on("request", (req) => {
-      const resourceType = req.resourceType();
-      if (
-        resourceType === "stylesheet" ||
-        resourceType === "font" ||
-        resourceType === "image"
-      ) {
-        req.abort();
-      } else {
-        req.continue();
-      }
+    await page.setExtraHTTPHeaders({
+      Accept:
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+      "Accept-Language": "en-US,en;q=0.9",
+      "Accept-Encoding": "gzip, deflate, br",
+      DNT: "1",
+      Connection: "keep-alive",
+      "Upgrade-Insecure-Requests": "1",
     });
 
-    // Navigate to the URL
+    console.log("Navigating to URL:", url);
     await page.goto(url, {
       waitUntil: "networkidle0",
-      timeout: 30000,
+      timeout: 60000,
     });
 
-    // Wait for the business information to load
-    await page.waitForSelector('[data-attrid="title"]', { timeout: 10000 });
+    // Wait for the main title element
+    await page.waitForSelector("h1.DUwDvf.lfPIob", { timeout: 30000 });
 
-    // Extract business data using multiple selector strategies
-    const businessData: BusinessData = await page.evaluate((): BusinessData => {
-      const data: BusinessData = {
-        name: null,
-        category: null,
-        phone: null,
-        website: null,
-        reviewCount: null,
-        rating: null,
-        profileImage: null,
+    // Wait a bit for the page to fully load
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    // Scroll down to load more content
+    await page.evaluate(() => {
+      window.scrollBy(0, 300);
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Extract business data
+    const businessData = await page.evaluate((): BusinessData => {
+      const getTextContent = (selector: string): string | null => {
+        const element = document.querySelector(selector);
+        return element ? element.textContent?.trim() || null : null;
       };
 
-      // Business Name - Multiple selectors for robustness
-      const nameSelectors: string[] = [
-        '[data-attrid="title"] span',
-        'h1[data-attrid="title"]',
-        ".x3AX1-LfntMc-header-title-title",
-        ".qrShPb span",
-        ".DUwDvf",
-      ];
+      const getAttribute = (
+        selector: string,
+        attribute: string
+      ): string | null => {
+        const element = document.querySelector(selector);
+        return element ? element.getAttribute(attribute) : null;
+      };
 
-      for (const selector of nameSelectors) {
-        const element = document.querySelector(selector) as HTMLElement;
-        if (element && element.textContent?.trim()) {
-          data.name = element.textContent.trim();
-          break;
-        }
-      }
+      // Business name
+      const name = getTextContent("h1.DUwDvf.lfPIob");
 
-      // Business Category
-      const categorySelectors: string[] = [
-        '[data-attrid="subtitle"]',
-        ".DkEaL",
-        ".mgr77e .DkEaL",
-      ];
+      // Category
+      const category =
+        getTextContent("button[jsaction*='category']") ||
+        getTextContent(".DkEaL");
 
-      for (const selector of categorySelectors) {
-        const element = document.querySelector(selector) as HTMLElement;
-        if (element && element.textContent?.trim()) {
-          data.category = element.textContent.trim();
-          break;
-        }
-      }
-
-      // Phone Number
-      const phoneSelectors: string[] = [
-        '[data-item-id="phone:tel:"] .Io6YTe',
-        '[data-value*="tel:"]',
-        "span[data-phone]",
-        ".rogA2c .Io6YTe",
-      ];
-
-      for (const selector of phoneSelectors) {
-        const element = document.querySelector(selector) as HTMLElement;
-        if (element && element.textContent?.trim()) {
-          data.phone = element.textContent.trim();
-          break;
-        }
-      }
+      // Phone number
+      const phone =
+        getTextContent("button[data-item-id*='phone']") ||
+        getTextContent("button[aria-label*='phone']") ||
+        getTextContent(".H1fHRe");
 
       // Website
-      const websiteSelectors: string[] = [
-        '[data-item-id*="authority"] a',
-        '[data-value*="http"] a',
-        '.CsEnBe a[href^="http"]',
-        '.rogA2c a[href^="http"]',
-      ];
+      const website =
+        getAttribute("a[data-item-id*='authority']", "href") ||
+        getAttribute("a[aria-label*='website']", "href");
 
-      for (const selector of websiteSelectors) {
-        const element = document.querySelector(selector) as HTMLAnchorElement;
-        if (element && element.href) {
-          data.website = element.href;
-          break;
-        }
-      }
+      // Rating and review count
+      const ratingElement = document.querySelector(".MW4etd");
+      const rating = ratingElement
+        ? parseFloat(ratingElement.textContent?.trim() || "0")
+        : null;
 
-      // Rating
-      const ratingSelectors: string[] = [
-        ".MW4etd",
-        ".ceNzKf",
-        '[jsaction*="pane.rating"] span',
-      ];
+      const reviewElement = document.querySelector(".UY7F9");
+      const reviewText = reviewElement?.textContent?.trim();
+      const reviewCount = reviewText
+        ? parseInt(reviewText.replace(/[^\d]/g, ""))
+        : null;
 
-      for (const selector of ratingSelectors) {
-        const element = document.querySelector(selector) as HTMLElement;
-        if (element && element.textContent?.trim()) {
-          const ratingText = element.textContent.trim();
-          const ratingMatch = ratingText.match(/([0-9]\.?[0-9]?)/);
-          if (ratingMatch) {
-            data.rating = parseFloat(ratingMatch[1]);
-            break;
-          }
-        }
-      }
+      // Profile image
+      const profileImage = getAttribute("img[decoding='async']", "src");
 
-      // Review Count
-      const reviewSelectors: string[] = [
-        ".UY7F9",
-        ".RDApEe",
-        '[jsaction*="pane.rating"] + span',
-        ".MW4etd + .UY7F9",
-      ];
+      // Address
+      const address =
+        getTextContent("button[data-item-id*='address']") ||
+        getTextContent(".LrzXr");
 
-      for (const selector of reviewSelectors) {
-        const element = document.querySelector(selector) as HTMLElement;
-        if (element && element.textContent?.trim()) {
-          const reviewText = element.textContent.trim();
-          const reviewMatch = reviewText.match(/\(([0-9,]+)\)/);
-          if (reviewMatch) {
-            data.reviewCount = parseInt(reviewMatch[1].replace(/,/g, ""));
-            break;
-          }
-        }
-      }
+      // Hours
+      const hoursElement = document.querySelector(".t39EBf .OqCZI");
+      const hours =
+        hoursElement?.getAttribute("aria-label") ||
+        getTextContent(".t39EBf .OqCZI");
 
-      // Profile Image
-      const imageSelectors: string[] = [
-        ".ZKCDEc img",
-        ".U39Pmb img",
-        '[data-photo-index="0"] img',
-        ".gallery-image img",
-      ];
+      // Plus code
+      const plusCode =
+        getTextContent("button[data-item-id*='oloc']") ||
+        getTextContent(".H1fHRe");
 
-      for (const selector of imageSelectors) {
-        const element = document.querySelector(selector) as HTMLImageElement;
-        if (element && element.src && !element.src.includes("data:image")) {
-          data.profileImage = element.src;
-          break;
-        }
-      }
-
-      return data;
+      return {
+        name,
+        category,
+        phone,
+        website,
+        reviewCount,
+        rating,
+        profileImage,
+        address,
+        hours,
+        plusCode,
+      };
     });
 
+    console.log("Scraped business data:", businessData);
     return businessData;
   } catch (error) {
     console.error("Error in scrapeGoogleMapsBusiness:", error);
     throw error;
   } finally {
+    if (page) {
+      await page.close();
+    }
     if (browser) {
       await browser.close();
     }
   }
-}
+};

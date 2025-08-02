@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BuisnessProfile {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  pfpUrl       String     @unique
+  category     String
+  city         String
+  country      String
+  phone        String?
+  website      String?
+  reviewRating Float?
+  reviewAmount Int?
+  votes        UserVote[]
+}
+
+model UserVote {
+  id        Int             @id @default(autoincrement())
+  ip        String
+  profileId Int
+  type      VoteType
+  profile   BuisnessProfile @relation(fields: [profileId], references: [id])
+
+  @@unique([ip, profileId])
+}
+
+enum VoteType {
+  UP
+  DOWN
+}

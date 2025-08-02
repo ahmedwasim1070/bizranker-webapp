@@ -65,7 +65,7 @@ function Hero() {
                             transition={{ duration: 0.6 }}
                             className="w-full flex flex-row items-center justify-center gap-x-2 my-2 md:px-0 xxs:px-4"
                         >
-                            <input type="search" placeholder="Search resturants , cafe or other buisnesses." className="md:w-2/1 xxs:w-full border-2 border-gray-400 rounded-lg px-2 py-2.5 text-gray-700 outline-none focus:border-primary transition-all " aria-label="Search box" />
+                            <input type="search" placeholder="Search resturants , cafe or other buisnesses." className="lg:w-2/3 md:w-2/1 xxs:w-full border-2 border-gray-400 rounded-lg px-2 py-2.5 text-gray-700 outline-none focus:border-primary transition-all " aria-label="Search box" />
                             <button type="button" className="bg-primary p-2.5 rounded-full border border-primary hover:bg-transparent transition-colors cursor-pointer group" aria-label="Search">
                                 <Search className="w-6.5 h-6.5 text-secondary group-hover:text-secondary" />
                             </button>
