@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Coffee, UtensilsCrossed, ShoppingBag, Car, Scissors, Dumbbell, Heart, Home, Briefcase, GraduationCap, Wrench, Palette, LucideIcon } from 'lucide-react';
 import { getUserLocation } from '@/app/providers/LocationProvider';
+import { FailedApiResponse, SuccessApiResponse } from '@/types';
 
 interface BusinessIcon {
     icon: LucideIcon;
@@ -53,14 +54,14 @@ const AddBusiness: React.FC = () => {
         }
         setIsLoading(true);
         try {
-            const response = await fetch(`/api/scrape-buisness/?url=${googleLink}`);
-            if (!response.ok) {
-                setError("Error while fetching profile data.");
-                throw new Error("Failed to fetch cities.");
+            const res = await fetch(`/api/scrape-buisness/?url=${googleLink}`);
+            if (!res.ok) {
+                const errData = (await res.json()) as FailedApiResponse;
+                throw new Error(`Error , ${errData.error}`);
             }
 
-            const data = await response.json();
-            console.log(data);
+            const data = (await res.json()) as SuccessApiResponse;
+            console.log(data.data);
         } catch (error) {
             setError("Unkown Error occured.");
             console.error("Failed to fetch cities.", error);

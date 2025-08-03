@@ -11,6 +11,9 @@ function BuisnessTypeCorosel() {
     const fetchBuisnessType = async () => {
         try {
             const res = await fetch('/data/buisnessTypes.json');
+            // 
+            // 
+            // 
             if (!res.ok) {
                 throw new Error("Failed to fetch buisness types.");
             }

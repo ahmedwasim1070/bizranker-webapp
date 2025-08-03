@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from "react"
 // Context
 import { useAreaSelectorContext } from "@/app/providers/AreaSelectorProvider";
+import { FailedApiResponse, SuccessApiResponse } from "@/types";
 
 // Interfaces
 interface CityListerProps {
@@ -29,17 +30,18 @@ function CityLister({ customSelectCss }: CityListerProps) {
             return;
         }
         try {
-            const response = await fetch(`/api/geonames/?countryCode=${selectedCountryCode}`);
-            if (!response.ok) {
-                setFetchingError("Error while loading cities.");
-                throw new Error("Failed to fetch cities.");
+            const res = await fetch(`/api/geonames/?countryCode=${selectedCountryCode}`);
+            if (!res.ok) {
+                const errData = (await res.json()) as FailedApiResponse;
+                setFetchingError("Error while loading Cities.");
+                throw new Error(`Error , ${errData}`);
             }
 
-            const data = await response.json();
-            setCities(data);
-        } catch (error) {
+            const data = (await res.json()) as SuccessApiResponse;
+            setCities(data.data);
+        } catch (err) {
             setFetchingError("Error while loading cities.");
-            console.error("Failed to fetch cities.", error);
+            console.error("Failed to fetch cities.", err);
         } finally {
             setIsFetching(false);
         }

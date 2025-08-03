@@ -2,7 +2,7 @@
 
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { LocationDataContext } from "@/middleware";
+import { FailedApiResponse, LocationDataContext, SuccessApiResponse } from "@/types";
 // Components
 import LocationSelector from "@/components/LocationSelector";
 import AddBusiness from "@/components/AddBuisness";
@@ -42,10 +42,14 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
 
                 try {
                     const res = await fetch(`/api/opencage/?lat=${latitude}&lng=${longitude}`);
-                    if (!res.ok) throw new Error("Failed to fetch live location");
+                    if (!res.ok) {
+                        const errData = (await res.json()) as FailedApiResponse;
+                        throw new Error(`Error , ${errData}`);
+                    };
+                    const data = (await res.json()) as SuccessApiResponse;
+                    const latNlngInfo = data.data;
 
-                    const data = await res.json();
-                    setUserLocation({ ...userLocation, defaultCity: data.city || data.town || data.village });
+                    setUserLocation({ ...userLocation, defaultCity: latNlngInfo.city || latNlngInfo.town || latNlngInfo.village });
                 } catch (err) {
                     console.error("Live location fetch error:", err);
                 }

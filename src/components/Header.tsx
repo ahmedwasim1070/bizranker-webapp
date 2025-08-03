@@ -6,7 +6,7 @@ import Image from "next/image";
 import { motion } from 'framer-motion';
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { AlignJustify, Locate, LocateIcon, LocationEdit } from "lucide-react";
+import { AlignJustify, LocationEdit } from "lucide-react";
 import AreaSelectorProvider from "@/app/providers/AreaSelectorProvider";
 import CityLister from "./CityLister";
 

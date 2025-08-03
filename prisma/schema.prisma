@@ -14,13 +14,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model BuisnessProfile {
+model BusinessProfile {
   id           Int        @id @default(autoincrement())
   name         String     @unique
   pfpUrl       String     @unique
-  category     String
+  categoryId   Int
+  category     Category   @relation(fields: [categoryId], references: [id])
   city         String
   country      String
+  owner        String
   phone        String?
   website      String?
   reviewRating Float?
@@ -28,12 +30,18 @@ model BuisnessProfile {
   votes        UserVote[]
 }
 
+model Category {
+  id       Int               @id @default(autoincrement())
+  name     String            @unique
+  profiles BusinessProfile[]
+}
+
 model UserVote {
   id        Int             @id @default(autoincrement())
   ip        String
   profileId Int
+  profile   BusinessProfile @relation(fields: [profileId], references: [id])
   type      VoteType
-  profile   BuisnessProfile @relation(fields: [profileId], references: [id])
 
   @@unique([ip, profileId])
 }

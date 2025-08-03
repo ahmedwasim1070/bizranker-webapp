@@ -1,14 +1,7 @@
 // // Imports
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-
-// Types
-type LocationDataContext = {
-  country: string;
-  countryCode: string;
-  capital: string;
-  defaultCity?: string;
-};
+import { LocationDataContext } from "./types";
 
 //
 export async function middleware() {
@@ -16,25 +9,34 @@ export async function middleware() {
   const locationRawCookie = cookieStore.get("user_location")?.value;
 
   if (locationRawCookie) return NextResponse.next();
-  try {
-    const geoRes = await fetch(
-      `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEO_KEY}`
+
+  if (!process.env.IPGEOLOCATION_KEY) {
+    console.error("IPGEOLOCATION_KEY environment variable is not set");
+    return NextResponse.json(
+      { success: false, error: "Server configuration error." },
+      { status: 500 }
     );
-    if (!geoRes.ok) {
-      console.error("Bad response from GeoIP", geoRes.status);
+  }
+  try {
+    const response = await fetch(
+      `https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.IPGEOLOCATION_KEY}`
+    );
+    if (!response.ok) {
+      console.error(
+        `ipgeolocation.io api error code : ${response.status}, with response : ${response}`
+      );
       return NextResponse.next();
     }
-    const geoData = await geoRes.json();
+    const data = await response.json();
 
-    const userLocation: LocationDataContext = {
-      country: geoData.country_name || "unknown",
-      countryCode: geoData.country_code2 || "unknown",
-      capital: geoData.country_capital || "unknown",
-      defaultCity: undefined,
+    const userIpLocationInfo: LocationDataContext = {
+      country: data.country_name || "unknown",
+      countryCode: data.country_code2 || "unknown",
+      capital: data.country_capital || "unknown",
     };
 
     const res = NextResponse.next();
-    res.cookies.set("user_location", JSON.stringify(userLocation), {
+    res.cookies.set("user_location", JSON.stringify(userIpLocationInfo), {
       path: "/",
       httpOnly: false,
       sameSite: "lax",
@@ -47,5 +49,3 @@ export async function middleware() {
     return NextResponse.next();
   }
 }
-
-export type { LocationDataContext };

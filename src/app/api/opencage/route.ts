@@ -1,44 +1,45 @@
+// Imports
 import { NextResponse } from "next/server";
+import { FailedApiResponse, SuccessApiResponse } from "@/types";
 
+//
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-
   const lat = searchParams.get("lat");
   const lng = searchParams.get("lng");
 
   if (!lat || !lng) {
-    return NextResponse.json(
-      { message: "Latitude and longitude are required." },
+    return NextResponse.json<FailedApiResponse>(
+      { success: false, error: "Latitude and Longitude are Required." },
       { status: 400 }
     );
   }
-
-  // Validate lat/lng are valid numbers
 
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lng);
 
   if (isNaN(latitude) || isNaN(longitude)) {
-    return NextResponse.json(
-      { message: "Invalid latitude or longitude format." },
+    return NextResponse.json<FailedApiResponse>(
+      { success: false, error: "Invalid Latitude or Longitude format." },
       { status: 400 }
     );
   }
 
   if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-    return NextResponse.json(
+    return NextResponse.json<FailedApiResponse>(
       {
-        message:
-          "Latitude must be between -90 and 90, longitude between -180 and 180.",
+        success: false,
+        error:
+          "Latitude must be between -90 and 90, Longitude between -180 and 180.",
       },
       { status: 400 }
     );
   }
 
   if (!process.env.OPENCAGE_KEY) {
-    console.error("OPENCAGE_KEY environment variable is not set");
-    return NextResponse.json(
-      { message: "Server configuration error." },
+    console.error("OPENCAGE_KEY environment variable is not set.");
+    return NextResponse.json<FailedApiResponse>(
+      { success: false, error: "Server Configuration Error." },
       { status: 500 }
     );
   }
@@ -50,11 +51,10 @@ export async function GET(request: Request) {
 
     if (!response.ok) {
       console.error(
-        `OpenCage API error: ${response.status} ${response.statusText}`
+        `OpenCage API error status : ${response.status} with response : ${response}`
       );
-
-      return NextResponse.json(
-        { message: "Error fetching data from OpenCage API" },
+      return NextResponse.json<FailedApiResponse>(
+        { success: false, error: "Error Fetching Data from OpenCage API." },
         { status: response.status }
       );
     }
@@ -62,23 +62,40 @@ export async function GET(request: Request) {
     const data = await response.json();
     if (!data.results || data.results.length === 0) {
       return NextResponse.json(
-        { message: "No location data found for the provided coordinates." },
+        {
+          success: false,
+          error: "No location Data found for the provided Coordinates.",
+        },
         { status: 404 }
       );
     }
     const selectedData = data.results[0].components;
-
-    return NextResponse.json({
+    const latNlngInfo = {
       city: selectedData?.city.split(" ")[0] || null,
       town: selectedData?.town || null,
       village: selectedData?.village || null,
       country: selectedData?.country || null,
-    });
+      countryCode: selectedData?.country_code || null,
+    };
+
+    return NextResponse.json<SuccessApiResponse>(
+      {
+        success: true,
+        message: "Successfully fetchedOpencageData.",
+        data: latNlngInfo,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Error in OpenCage API:", error);
-    return NextResponse.json(
-      { message: "Internal server error!" },
-      { status: 500 }
+    console.error("Error in OpenCage API , ", error);
+    return NextResponse.json<FailedApiResponse>(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Unkown Error !.",
+      },
+      {
+        status: 500,
+      }
     );
   }
 }

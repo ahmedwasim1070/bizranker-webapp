@@ -19,13 +19,13 @@ function CountryLister() {
         setIsFetching(true);
         setFetchingError(null);
         try {
-            const response = await fetch("/data/countries.json");
-            if (!response.ok) {
-                setFetchingError("Error while loading countries.");
-                throw new Error("Failed to fetch countries");
+            const res = await fetch("/data/countries.json");
+            if (!res.ok) {
+                setFetchingError("Error while loading Countries.");
+                throw new Error(`Failed to fetch countries , status:${res.status}`)
             }
 
-            const data = await response.json();
+            const data = await res.json();
             setCountries(data);
         } catch (error) {
             setFetchingError("Error while loading countries.");
