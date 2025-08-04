@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Coffee, UtensilsCrossed, ShoppingBag, Car, Scissors, Dumbbell, Heart, Home, Briefcase, GraduationCap, Wrench, Palette, LucideIcon } from 'lucide-react';
-import { getUserLocation } from '@/app/providers/LocationProvider';
+import { getGlobalProvider } from '@/app/providers/GolobalProvider';
 import { FailedApiResponse, SuccessApiResponse } from '@/types';
 
 interface BusinessIcon {
@@ -10,7 +10,7 @@ interface BusinessIcon {
 }
 
 const AddBusiness: React.FC = () => {
-    const { setIsAddBuisness } = getUserLocation();
+    const { setIsAddBusiness } = getGlobalProvider();
     const [googleLink, setGoogleLink] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -54,7 +54,7 @@ const AddBusiness: React.FC = () => {
         }
         setIsLoading(true);
         try {
-            const res = await fetch(`/api/scrape-buisness/?url=${googleLink}`);
+            const res = await fetch(`/api/scrape-business/?url=${googleLink}`);
             if (!res.ok) {
                 const errData = (await res.json()) as FailedApiResponse;
                 throw new Error(`Error , ${errData.error}`);
@@ -108,7 +108,7 @@ const AddBusiness: React.FC = () => {
                 className="relative w-full max-w-4xl h-[600px] rounded-2xl shadow-2xl overflow-hidden"
             >
                 {/* Close Button */}
-                <button onClick={() => setIsAddBuisness(false)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background backdrop-blur-sm hover:bg-secondary/20 transition-colors cursor-pointer">
+                <button onClick={() => setIsAddBusiness(false)} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background backdrop-blur-sm hover:bg-secondary/20 transition-colors cursor-pointer">
                     <X className="w-7 h-7 text-primary" />
                 </button>
 

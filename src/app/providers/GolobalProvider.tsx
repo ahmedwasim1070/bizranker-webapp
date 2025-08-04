@@ -3,17 +3,16 @@
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { FailedApiResponse, LocationDataContext, SuccessApiResponse } from "@/types";
+import { usePathname } from "next/navigation";
 // Components
 import LocationSelector from "@/components/LocationSelector";
-import AddBusiness from "@/components/AddBuisness";
+import AddBusiness from "@/components/AddBusiness";
 
 // Interfaces
 interface LocationContextType {
     userLocation: LocationDataContext | null;
     setUserLocation: (location: LocationDataContext | null) => void;
-    selectedCity: string | null;
-    setSelectedCity: (city: string | null) => void;
-    setIsAddBuisness: (isAddBuisness: boolean) => void;
+    setIsAddBusiness: (isAddBusiness: boolean) => void;
 }
 interface LocationProviderProps {
     children: ReactNode;
@@ -24,14 +23,15 @@ interface LocationProviderProps {
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 // 
-export function LocationProvider({ children, locationData }: LocationProviderProps) {
+export function GlobalProvider({ children, locationData }: LocationProviderProps) {
     // 
+    const pathname = usePathname();
     const [userLocation, setUserLocation] = useState<LocationDataContext | null>(locationData || null);
-    const [selectedCity, setSelectedCity] = useState<string | null>(null);
     const [isLocationPrompt, setIsLocationPrompt] = useState<boolean>(false);
-    const [isAddBuisness, setIsAddBuisness] = useState<boolean>(false);
+    const [isAddBusiness, setIsAddBusiness] = useState<boolean>(false);
+    const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-    // 
+    // Get and process cordinates
     const fetchLiveLocation = () => {
         if (!userLocation) return;
         if (userLocation.defaultCity) return;
@@ -63,6 +63,25 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
             }
         );
     };
+    // Updates location cookies
+    const updateCookie = () => {
+        setIsLocationPrompt(false);
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 1);
+
+        document.cookie = `user_location=${JSON.stringify(userLocation)}; expires=${expires.toUTCString()}; path=/`;
+        setIsLocationPrompt(false);
+    }
+    // 
+    // Fetches Profiles
+    // const fetchProfiles = () => {
+    //     try{
+    //         // const res = await fetch(`/api/fetchProfiles/?requestType=${}&category=${}&`)
+
+    //     }catch(err){
+
+    //     }
+    // }
 
     // 
     useEffect(() => {
@@ -70,24 +89,19 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
     }, []);
     useEffect(() => {
         if (userLocation) {
-            setIsLocationPrompt(false);
-            const expires = new Date();
-            expires.setDate(expires.getDate() + 1);
-
-            document.cookie = `user_location=${JSON.stringify(userLocation)}; expires=${expires.toUTCString()}; path=/`;
-            setIsLocationPrompt(false);
+            updateCookie();
         } else {
             setIsLocationPrompt(true);
         }
     }, [userLocation]);
 
     return (
-        <LocationContext.Provider value={{ userLocation, setUserLocation, selectedCity, setSelectedCity, setIsAddBuisness }}>
+        <LocationContext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
 
             {/*  */}
-            {isAddBuisness && <AddBusiness />}
+            {isAddBusiness && <AddBusiness />}
 
             {children}
         </LocationContext.Provider>
@@ -95,12 +109,10 @@ export function LocationProvider({ children, locationData }: LocationProviderPro
 }
 
 // Hook to use context
-export const getUserLocation = (): LocationContextType => {
+export const getGlobalProvider = (): LocationContextType => {
     const context = useContext(LocationContext);
     if (context === undefined) {
-        throw new Error('getUserLocation must be used within a LocationProvider');
+        throw new Error('getGlobalProvider must be used within a GlobalProvider');
     }
     return context;
 }
-
-export type { LocationContextType };

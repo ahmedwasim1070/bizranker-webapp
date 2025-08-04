@@ -4,12 +4,12 @@ import Image from "next/image";
 import { motion } from 'framer-motion';
 import { Search } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
-import { getUserLocation } from "@/app/providers/LocationProvider";
-import AddBuisnessBtn from "./AddBuisnessBtn";
+import { getGlobalProvider } from "@/app/providers/GolobalProvider";
+import AddBusinessBtn from "./AddBusinessBtn";
 
 // 
 function Hero() {
-    const { userLocation, selectedCity } = getUserLocation();
+    const { userLocation, selectedCity } = getGlobalProvider();
     const navigationItems = [
         {
             href: '/about-us',
@@ -37,7 +37,7 @@ function Hero() {
                             animate={{ y: 0, scale: 1, opacity: 1 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <Image className="md:w-auto xs:w-50 xxs:w-46" src='/main-logo.svg' width={270} height={120} alt="Bizraker - Buisness Directory and Ranking Platform logo" />
+                            <Image className="md:w-auto xs:w-50 xxs:w-46" src='/main-logo.svg' width={270} height={120} alt="Bizraker - Business Directory and Ranking Platform logo" />
                             <span className="sr-only">Bizranker</span>
                         </motion.h1>
 
@@ -47,7 +47,7 @@ function Hero() {
                             transition={{ duration: 0.4 }}
                             className="text-secondary md:text-2xl sm:text-xl xxs:text-lg font-bold"
                         >
-                            Top Buisness
+                            Top Business
                             <Typewriter
                                 words={[" in City.", " in Country.", " in World."]}
                                 loop={false}
@@ -65,7 +65,7 @@ function Hero() {
                             transition={{ duration: 0.6 }}
                             className="w-full flex flex-row items-center justify-center gap-x-2 my-2 md:px-0 xxs:px-4"
                         >
-                            <input type="search" placeholder="Search resturants , cafe or other buisnesses." className="lg:w-2/3 md:w-2/1 xxs:w-full border-2 border-gray-400 rounded-lg px-2 py-2.5 text-gray-700 outline-none focus:border-primary transition-all " aria-label="Search box" />
+                            <input type="search" placeholder="Search resturants , cafe or other business." className="lg:w-2/3 md:w-2/1 xxs:w-full border-2 border-gray-400 rounded-lg px-2 py-2.5 text-gray-700 outline-none focus:border-primary transition-all " aria-label="Search box" />
                             <button type="button" className="bg-primary p-2.5 rounded-full border border-primary hover:bg-transparent transition-colors cursor-pointer group" aria-label="Search">
                                 <Search className="w-6.5 h-6.5 text-secondary group-hover:text-secondary" />
                             </button>
@@ -83,7 +83,7 @@ function Hero() {
                             </ul>
                         </nav>
 
-                        <AddBuisnessBtn />
+                        <AddBusinessBtn />
 
                     </section>
                 </article>

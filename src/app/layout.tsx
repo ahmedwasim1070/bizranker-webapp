@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { cookies } from "next/headers";
 // Provider
-import { LocationProvider } from "./providers/LocationProvider";
+import { GlobalProvider } from "./providers/GolobalProvider";
 // Components
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -30,11 +30,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	return (
 		<html lang="en">
 			<body>
-				<LocationProvider locationData={locationData} >
+				<GlobalProvider locationData={locationData} >
 					<Header />
 					{children}
 					<Footer />
-				</LocationProvider>
+				</GlobalProvider>
 			</body>
 		</html>
 	);

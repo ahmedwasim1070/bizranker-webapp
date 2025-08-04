@@ -55,7 +55,7 @@ function Footer() {
 
                     {/*  */}
                     <section className="space-y-2 flex flex-col items-center">
-                        <Link href="/" area-label="Bizranker Buisness Directory Home">
+                        <Link href="/" area-label="Bizranker Business Directory Home">
                             <Image
                                 src='/main-logo.svg'
                                 alt="BizRanker - Business Directory and Ranking Platform Logo"
@@ -64,7 +64,7 @@ function Footer() {
                                 className="hover:opacity-80 transition-opacity"
                             />
                         </Link>
-                        <h6 className="text-secondary text-xl font-semibold ">Ranking Buisnesses</h6>
+                        <h6 className="text-secondary text-xl font-semibold ">Ranking Business</h6>
                     </section>
 
                     {/*  */}

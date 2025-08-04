@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
 
 // 
-function BusinessTypeCorosel() {
+function BusinessCateogoriesCorosel() {
     const sliderRef = useRef(null);
     const [businessCategory, setBusinessCategory] = useState<any[] | null>(null);
 
@@ -92,12 +92,12 @@ function BusinessTypeCorosel() {
                     ref={sliderRef}
                     className="w-full flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
                 >
-                    {businessCategory && businessCategory.map((buisness, idx) => (
+                    {businessCategory && businessCategory.map((business, idx) => (
                         <div
                             key={idx}
                             className="flex flex-row items-center gap-x-1 xxs:gap-x-2 border border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap cursor-pointer group transition-colors hover:bg-transparent"
                         >
-                            <p className="text-white group-hover:text-secondary font-semibold text-xxs xxs:text-base">Top{" "}{buisness.name}</p>
+                            <p className="text-white group-hover:text-secondary font-semibold text-xxs xxs:text-base">Top{" "}{business.name}</p>
                         </div>
                     ))}
                 </div>
@@ -113,4 +113,4 @@ function BusinessTypeCorosel() {
     )
 }
 
-export default BusinessTypeCorosel;
+export default BusinessCateogoriesCorosel;

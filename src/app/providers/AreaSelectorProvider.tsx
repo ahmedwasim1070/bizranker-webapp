@@ -3,7 +3,7 @@
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 // Context
-import { getUserLocation } from "./LocationProvider";
+import { getGlobalProvider } from "./GolobalProvider";
 
 // Interfaces
 interface AreaSelectorContextTypes {
@@ -29,7 +29,7 @@ const AreaSelectorContext = createContext<AreaSelectorContextTypes | undefined>(
 // Provider
 function AreaSelectorProvider({ children }: AreaSelectorProviderProps) {
     // Context states
-    const { userLocation, setUserLocation } = getUserLocation();
+    const { userLocation, setUserLocation } = getGlobalProvider();
     // States
     const [selectedCountryData, setSelectedCountryData] = useState<selectedCountryDataPayload | null>(null);
     const [selectedCity, setSelectedCity] = useState<string | null>(null);

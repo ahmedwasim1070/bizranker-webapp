@@ -41,7 +41,7 @@ function Header() {
                     <div
                         id="logo" className="shrink-0"
                     >
-                        <Link href="/" area-label="Bizranker Buisness Directory Home">
+                        <Link href="/" area-label="Bizranker Business Directory Home">
                             <Image
                                 src='/main-logo.svg'
                                 alt="BizRanker - Business Directory and Ranking Platform Logo"
