@@ -4,22 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
 
 // 
-function BuisnessTypeCorosel() {
+function BusinessTypeCorosel() {
     const sliderRef = useRef(null);
-    const [buisnessType, setBuisnessType] = useState<any[] | null>(null);
+    const [businessCategory, setBusinessCategory] = useState<any[] | null>(null);
 
-    const fetchBuisnessType = async () => {
+    const fetchBusinessType = async () => {
         try {
-            const res = await fetch('/data/buisnessTypes.json');
-            // 
-            // 
-            // 
+            const res = await fetch('/api/fetchCategories');
             if (!res.ok) {
-                throw new Error("Failed to fetch buisness types.");
+                throw new Error("Failed to fetch business types.");
             }
 
             const data = await res.json();
-            setBuisnessType(data);
+            const businessCategory = data.data;
+            setBusinessCategory(businessCategory);
         } catch (error) {
             console.error('Error fetching business types:', error);
         }
@@ -74,8 +72,8 @@ function BuisnessTypeCorosel() {
 
     // 
     useEffect(() => {
-        if (!buisnessType) {
-            fetchBuisnessType();
+        if (!businessCategory) {
+            fetchBusinessType();
         }
     }, [])
 
@@ -94,12 +92,12 @@ function BuisnessTypeCorosel() {
                     ref={sliderRef}
                     className="w-full flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
                 >
-                    {buisnessType && buisnessType.map((buisness, idx) => (
+                    {businessCategory && businessCategory.map((buisness, idx) => (
                         <div
                             key={idx}
                             className="flex flex-row items-center gap-x-1 xxs:gap-x-2 border border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap cursor-pointer group transition-colors hover:bg-transparent"
                         >
-                            <p className="text-white group-hover:text-secondary font-semibold text-xxs xxs:text-base">{buisness.type}</p>
+                            <p className="text-white group-hover:text-secondary font-semibold text-xxs xxs:text-base">Top{" "}{buisness.name}</p>
                         </div>
                     ))}
                 </div>
@@ -115,4 +113,4 @@ function BuisnessTypeCorosel() {
     )
 }
 
-export default BuisnessTypeCorosel;
+export default BusinessTypeCorosel;
