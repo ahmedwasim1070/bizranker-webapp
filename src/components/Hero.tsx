@@ -9,7 +9,7 @@ import AddBusinessBtn from "./AddBusinessBtn";
 
 // 
 function Hero() {
-    const { userLocation, selectedCity } = getGlobalProvider();
+    const { userLocation } = getGlobalProvider();
     const navigationItems = [
         {
             href: '/about-us',
@@ -71,7 +71,7 @@ function Hero() {
                             </button>
                         </motion.div>
 
-                        <p className="text-secondary my-2 md:text-md xxs:text-sm">Searching in <strong className="text-primary">{selectedCity || userLocation?.defaultCity || userLocation?.capital}</strong> , <strong>{userLocation?.countryCode}</strong></p>
+                        <p className="text-secondary my-2 md:text-md xxs:text-sm">Searching in <strong className="text-primary">{userLocation?.defaultCity || userLocation?.capital}</strong> , <strong>{userLocation?.countryCode}</strong></p>
 
                         <nav className="my-2">
                             <ul className="flex gap-x-4 md:text-md xxs:text-sm">

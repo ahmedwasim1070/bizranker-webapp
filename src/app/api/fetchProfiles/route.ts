@@ -1,6 +1,5 @@
 // Imports
 import { NextResponse } from "next/server";
-import { validateCategory } from "@/lib/api/validator";
 import { prisma } from "@/lib/prismaClient";
 import { FailedApiResponse, SuccessApiResponse } from "@/types";
 
@@ -23,26 +22,16 @@ export async function GET(request: Request) {
     );
   }
 
-  const category = searchParams.get("category");
-  if (!category) {
+  const categoryId = Number(searchParams.get("categoryId"));
+  if (!categoryId || categoryId < 0) {
     return NextResponse.json<FailedApiResponse>(
       {
         success: false,
-        error: "Category is Required.",
+        error: "Category ID is Invalid.",
       },
       {
         status: 400,
       }
-    );
-  }
-  const categoryId = await validateCategory(category);
-  if (categoryId === null) {
-    return NextResponse.json<FailedApiResponse>(
-      {
-        success: false,
-        error: "Category in Invalid.",
-      },
-      { status: 400 }
     );
   }
 

@@ -1,14 +1,18 @@
+// Imports
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Coffee, UtensilsCrossed, ShoppingBag, Car, Scissors, Dumbbell, Heart, Home, Briefcase, GraduationCap, Wrench, Palette, LucideIcon } from 'lucide-react';
 import { getGlobalProvider } from '@/app/providers/GolobalProvider';
 import { FailedApiResponse, SuccessApiResponse } from '@/types';
+import LoadingDots from './LoadingDots';
 
+// Interfaces
 interface BusinessIcon {
     icon: LucideIcon;
     label: string;
 }
 
+// 
 const AddBusiness: React.FC = () => {
     const { setIsAddBusiness } = getGlobalProvider();
     const [googleLink, setGoogleLink] = useState<string>('');
@@ -69,29 +73,6 @@ const AddBusiness: React.FC = () => {
             setIsLoading(false);
         }
     };
-
-    const LoadingDots: React.FC = () => (
-        <div className="flex items-center justify-center space-x-1">
-            <motion.div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#fe7743' }}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-            />
-            <motion.div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#273f4f' }}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-            />
-            <motion.div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: '#fe7743' }}
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-            />
-        </div>
-    );
 
     return (
         <motion.div
@@ -220,7 +201,7 @@ const AddBusiness: React.FC = () => {
                                     whileHover={!isLoading ? { scale: 1.02 } : {}}
                                     whileTap={!isLoading ? { scale: 0.98 } : {}}
                                 >
-                                    {isLoading ? <LoadingDots /> : 'Add Business'}
+                                    {isLoading ? <LoadingDots className="scale-90" /> : 'Add Business'}
                                 </motion.button>
                             </motion.form>
 

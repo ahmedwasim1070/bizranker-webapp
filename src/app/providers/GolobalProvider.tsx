@@ -9,27 +9,30 @@ import LocationSelector from "@/components/LocationSelector";
 import AddBusiness from "@/components/AddBusiness";
 
 // Interfaces
-interface LocationContextType {
+interface GlobalContextType {
     userLocation: LocationDataContext | null;
     setUserLocation: (location: LocationDataContext | null) => void;
     setIsAddBusiness: (isAddBusiness: boolean) => void;
+    selectedCategoryId: number;
+    setSelectedCategoryId: (selectedCategoryId: number) => void;
 }
-interface LocationProviderProps {
+interface GlobalProviderProps {
     children: ReactNode;
     locationData: LocationDataContext | null;
 }
 
 // Global context
-const LocationContext = createContext<LocationContextType | undefined>(undefined);
+const GlobalConext = createContext<GlobalContextType | undefined>(undefined);
 
 // 
-export function GlobalProvider({ children, locationData }: LocationProviderProps) {
-    // 
+export function GlobalProvider({ children, locationData }: GlobalProviderProps) {
+    // Path
     const pathname = usePathname();
+    // States
     const [userLocation, setUserLocation] = useState<LocationDataContext | null>(locationData || null);
     const [isLocationPrompt, setIsLocationPrompt] = useState<boolean>(false);
     const [isAddBusiness, setIsAddBusiness] = useState<boolean>(false);
-    const [selectedCategory, setSelectedCategory] = useState<string>("all");
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
 
     // Get and process cordinates
     const fetchLiveLocation = () => {
@@ -51,14 +54,16 @@ export function GlobalProvider({ children, locationData }: LocationProviderProps
 
                     setUserLocation({ ...userLocation, defaultCity: latNlngInfo.city || latNlngInfo.town || latNlngInfo.village });
                 } catch (err) {
-                    console.error("Live location fetch error:", err);
+                    console.error("Failed to fetchLiveLocation continuing with capital :", err);
+                    setUserLocation({ ...userLocation, defaultCity: userLocation.capital })
                 }
             },
             (err) => {
-                console.error("location permission error:", err.message);
+                console.error("Location permission denied or timedout continuing with capital :", err.message);
+                setUserLocation({ ...userLocation, defaultCity: userLocation.capital })
             },
             {
-                timeout: 50000,
+                timeout: 30000,
                 maximumAge: 0,
             }
         );
@@ -72,31 +77,69 @@ export function GlobalProvider({ children, locationData }: LocationProviderProps
         document.cookie = `user_location=${JSON.stringify(userLocation)}; expires=${expires.toUTCString()}; path=/`;
         setIsLocationPrompt(false);
     }
-    // 
+    // Generates fetch profile url
+    const generateFetchProfilesApi = () => {
+        let type;
+        console.log(pathname);
+        switch (pathname) {
+            case "/":
+                type = "cityProfiles";
+                break;
+            case "/top/country/profiles":
+                type = "countryProfiles";
+                break;
+            case "/top/world/profiles":
+                type = "worldProfiles";
+                break;
+            default:
+                type = "cityProfiles";
+        }
+        return `/api/fetchProfiles/?requestType=${type}&categoryId=${selectedCategoryId}&country=${userLocation?.country}&city=${userLocation?.defaultCity}`;
+    }
     // Fetches Profiles
-    // const fetchProfiles = () => {
-    //     try{
-    //         // const res = await fetch(`/api/fetchProfiles/?requestType=${}&category=${}&`)
+    const fetchProfiles = async () => {
+        if (!userLocation?.defaultCity)
+            return;
 
-    //     }catch(err){
+        const apiUrl = generateFetchProfilesApi();
+        console.log(apiUrl);
 
-    //     }
-    // }
+        try {
+            const res = await fetch(apiUrl);
+            if (!res.ok) {
+                const errData = (await res.json()) as FailedApiResponse;
+                throw new Error(`Error , ${errData}`);
+            }
 
-    // 
+            const data = await res.json();
+            const buisnessProfiles = data.data;
+            console.log(buisnessProfiles);
+        } catch (err) {
+            console.error("Failed to fetchProfiels:", err);
+        }
+    }
+
+    // Effects
+    //  Fetch Live Location
     useEffect(() => {
         fetchLiveLocation();
     }, []);
+    // On User Location change
     useEffect(() => {
         if (userLocation) {
             updateCookie();
+            fetchProfiles();
         } else {
             setIsLocationPrompt(true);
         }
     }, [userLocation]);
+    // On category change
+    useEffect(() => {
+        fetchProfiles();
+    }, [selectedCategoryId])
 
     return (
-        <LocationContext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness }}>
+        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
 
@@ -104,13 +147,13 @@ export function GlobalProvider({ children, locationData }: LocationProviderProps
             {isAddBusiness && <AddBusiness />}
 
             {children}
-        </LocationContext.Provider>
+        </GlobalConext.Provider>
     );
 }
 
 // Hook to use context
-export const getGlobalProvider = (): LocationContextType => {
-    const context = useContext(LocationContext);
+export const getGlobalProvider = (): GlobalContextType => {
+    const context = useContext(GlobalConext);
     if (context === undefined) {
         throw new Error('getGlobalProvider must be used within a GlobalProvider');
     }

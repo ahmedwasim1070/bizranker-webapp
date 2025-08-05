@@ -2,26 +2,40 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
+import { getGlobalProvider } from "@/app/providers/GolobalProvider";
+import LoadingDots from './LoadingDots';
 
 // 
 function BusinessCateogoriesCorosel() {
+    // Context
+    const { selectedCategoryId, setSelectedCategoryId } = getGlobalProvider();
+    // Refs
     const sliderRef = useRef(null);
-    const [businessCategory, setBusinessCategory] = useState<any[] | null>(null);
+    // States
+    const [isFechingBusinessCategories, setIsFetchingBusinessCategory] = useState<boolean>(false);
+    const [businessCategories, setBusinessCategories] = useState<any[] | null>(null);
 
+    // fetchAllBuinessTypes
     const fetchBusinessType = async () => {
+        setIsFetchingBusinessCategory(true);
         try {
             const res = await fetch('/api/fetchCategories');
             if (!res.ok) {
-                throw new Error("Failed to fetch business types.");
+                setIsFetchingBusinessCategory(false);
+                throw new Error("Failed to fetch business categories.");
             }
 
             const data = await res.json();
-            const businessCategory = data.data;
-            setBusinessCategory(businessCategory);
+            const storedBusinessCategory = data.data;
+            setBusinessCategories(storedBusinessCategory);
         } catch (error) {
             console.error('Error fetching business types:', error);
+            setIsFetchingBusinessCategory(false);
+        } finally {
+            setIsFetchingBusinessCategory(false);
         }
     }
+    // handleScroll
     const handleScroll = (direction: string) => {
         const slider = sliderRef.current as HTMLElement | null;
         if (!slider) return;
@@ -69,10 +83,18 @@ function BusinessCateogoriesCorosel() {
             }
         }
     };
+    // handle category btn click
+    const handleCategoryChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const categoryId = parseInt((e.target as HTMLButtonElement).value);
+        if (selectedCategoryId !== categoryId) {
+            setSelectedCategoryId(categoryId);
+        }
+    }
 
-    // 
+
+    // Effects
     useEffect(() => {
-        if (!businessCategory) {
+        if (!businessCategories) {
             fetchBusinessType();
         }
     }, [])
@@ -91,15 +113,37 @@ function BusinessCateogoriesCorosel() {
                 <div
                     ref={sliderRef}
                     className="w-full flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
+                    style={{ minHeight: '48px', minWidth: '120px', position: 'relative' }}
                 >
-                    {businessCategory && businessCategory.map((business, idx) => (
-                        <div
-                            key={idx}
-                            className="flex flex-row items-center gap-x-1 xxs:gap-x-2 border border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap cursor-pointer group transition-colors hover:bg-transparent"
-                        >
-                            <p className="text-white group-hover:text-secondary font-semibold text-xxs xxs:text-base">Top{" "}{business.name}</p>
+                    {isFechingBusinessCategories ? (
+                        <div className="w-full flex items-center justify-center">
+                            <LoadingDots className="scale-125" />
                         </div>
-                    ))}
+                    ) : (
+                        <>
+                            <button
+                                value={0}
+                                onClick={handleCategoryChange}
+                                type="button"
+                                aria-label="Change Category"
+                                className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategoryId === 0 ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
+                            >
+                                All
+                            </button>
+                            {businessCategories && businessCategories.map((category, idx) => (
+                                <button
+                                    key={idx}
+                                    value={category.id}
+                                    onClick={handleCategoryChange}
+                                    type="button"
+                                    aria-label="Change Category"
+                                    className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategoryId === category.id ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
+                                >
+                                    Top{" "}{category.name}
+                                </button>
+                            ))}
+                        </>
+                    )}
                 </div>
 
                 <button
