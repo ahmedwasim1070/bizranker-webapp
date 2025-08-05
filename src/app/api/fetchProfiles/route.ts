@@ -22,8 +22,21 @@ export async function GET(request: Request) {
     );
   }
 
-  const categoryId = Number(searchParams.get("categoryId"));
-  if (!categoryId || categoryId < 0) {
+  const category = searchParams.get("categoryId");
+  if (!category) {
+    return NextResponse.json<FailedApiResponse>(
+      {
+        success: false,
+        error: "Category is Required.",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  const categoryId = parseInt(category);
+  if (categoryId < 0) {
     return NextResponse.json<FailedApiResponse>(
       {
         success: false,
@@ -63,6 +76,7 @@ const fetchWorldProfiles = async (categoryId: number) => {
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
+        include: { category: true },
         orderBy: { reviewRating: "desc" },
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
@@ -87,6 +101,7 @@ const fetchWorldProfiles = async (categoryId: number) => {
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
+        include: { category: true },
         where: {
           categoryId,
         },
@@ -150,6 +165,7 @@ const fetchCountryProfiles = async (
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
+        include: { category: true },
         where: { country },
         orderBy: { reviewRating: "desc" },
       });
@@ -175,6 +191,7 @@ const fetchCountryProfiles = async (
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
+        include: { category: true },
         where: {
           categoryId,
           country,
@@ -251,6 +268,7 @@ const fetchCityProfiles = async (
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
+        include: { category: true },
         where: { city, country },
         orderBy: { reviewRating: "desc" },
       });
@@ -276,6 +294,7 @@ const fetchCityProfiles = async (
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
+        include: { category: true },
         where: {
           categoryId,
           city,

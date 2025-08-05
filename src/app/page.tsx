@@ -4,6 +4,7 @@
 // Components
 import Hero from "@/components/Hero";
 import BusinessCateogoriesCorosel from "@/components/BusinessCateogoriesCorosel";
+import ProfilesShowroom from "@/components/ProfilesShowroom";
 
 // 
 function Home() {
@@ -13,6 +14,7 @@ function Home() {
 			<section>
 				<Hero />
 				<BusinessCateogoriesCorosel />
+				<ProfilesShowroom />
 			</section>
 		</>
 	)

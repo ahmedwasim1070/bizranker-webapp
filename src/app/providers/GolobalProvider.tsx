@@ -15,6 +15,8 @@ interface GlobalContextType {
     setIsAddBusiness: (isAddBusiness: boolean) => void;
     selectedCategoryId: number;
     setSelectedCategoryId: (selectedCategoryId: number) => void;
+    requestedProfiles: any[] | null;
+    requestedProfilesError: string | null;
 }
 interface GlobalProviderProps {
     children: ReactNode;
@@ -33,6 +35,8 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     const [isLocationPrompt, setIsLocationPrompt] = useState<boolean>(false);
     const [isAddBusiness, setIsAddBusiness] = useState<boolean>(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+    const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
+    const [requestedProfiles, setRequestedProfiles] = useState<any[] | null>(null);
 
     // Get and process cordinates
     const fetchLiveLocation = () => {
@@ -47,7 +51,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
                     const res = await fetch(`/api/opencage/?lat=${latitude}&lng=${longitude}`);
                     if (!res.ok) {
                         const errData = (await res.json()) as FailedApiResponse;
-                        throw new Error(`Error , ${errData}`);
+                        throw new Error(`Error , ${errData.error}`);
                     };
                     const data = (await res.json()) as SuccessApiResponse;
                     const latNlngInfo = data.data;
@@ -80,7 +84,6 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     // Generates fetch profile url
     const generateFetchProfilesApi = () => {
         let type;
-        console.log(pathname);
         switch (pathname) {
             case "/":
                 type = "cityProfiles";
@@ -102,20 +105,21 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             return;
 
         const apiUrl = generateFetchProfilesApi();
-        console.log(apiUrl);
 
         try {
             const res = await fetch(apiUrl);
             if (!res.ok) {
                 const errData = (await res.json()) as FailedApiResponse;
+                setRequestedProfilesError(errData.error);
                 throw new Error(`Error , ${errData}`);
             }
 
             const data = await res.json();
             const buisnessProfiles = data.data;
-            console.log(buisnessProfiles);
+            setRequestedProfiles(buisnessProfiles);
         } catch (err) {
-            console.error("Failed to fetchProfiels:", err);
+            setRequestedProfilesError("Failed to Load Profiles.");
+            console.error("Failed to fetchProfiels : ", err);
         }
     }
 
@@ -139,7 +143,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     }, [selectedCategoryId])
 
     return (
-        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId }}>
+        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId, requestedProfiles, requestedProfilesError }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
 

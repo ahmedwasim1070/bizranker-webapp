@@ -3,25 +3,38 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
-import LoadingDots from './LoadingDots';
 
-// 
+// Skeleton loader for category buttons
+const CategorySkeleton = () => (
+    <div className="flex flex-row gap-x-2 w-full">
+        {[...Array(10)].map((_, idx) => (
+            <div
+                key={idx}
+                className="xs:h-12 xxs:h-10 w-22 xxs:w-34 rounded-lg bg-gray-400 animate-pulse"
+            />
+        ))}
+    </div>
+);
+
 function BusinessCateogoriesCorosel() {
     // Context
     const { selectedCategoryId, setSelectedCategoryId } = getGlobalProvider();
     // Refs
     const sliderRef = useRef(null);
     // States
-    const [isFechingBusinessCategories, setIsFetchingBusinessCategory] = useState<boolean>(false);
+    const [isFeching, setIsFetching] = useState<boolean>(false);
     const [businessCategories, setBusinessCategories] = useState<any[] | null>(null);
+    const [isError, setIsError] = useState<boolean>(false);
 
     // fetchAllBuinessTypes
     const fetchBusinessType = async () => {
-        setIsFetchingBusinessCategory(true);
+        setIsFetching(true);
+        setIsError(false);
         try {
             const res = await fetch('/api/fetchCategories');
             if (!res.ok) {
-                setIsFetchingBusinessCategory(false);
+                setIsFetching(false);
+                setIsError(true);
                 throw new Error("Failed to fetch business categories.");
             }
 
@@ -30,9 +43,10 @@ function BusinessCateogoriesCorosel() {
             setBusinessCategories(storedBusinessCategory);
         } catch (error) {
             console.error('Error fetching business types:', error);
-            setIsFetchingBusinessCategory(false);
+            setIsError(true);
+            setIsFetching(false);
         } finally {
-            setIsFetchingBusinessCategory(false);
+            setIsFetching(false);
         }
     }
     // handleScroll
@@ -45,9 +59,9 @@ function BusinessCateogoriesCorosel() {
         if (direction === "next") {
             if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 1) {
                 // At end, loop to start
-                animate(slider.scrollLeft, 0, {
+                (slider.scrollLeft, 0, {
                     duration: 0.5,
-                    onUpdate: (latest) => {
+                    onUpdate: (latest: number) => {
                         slider.scrollLeft = latest;
                     }
                 });
@@ -102,7 +116,7 @@ function BusinessCateogoriesCorosel() {
     // 
     return (
         <>
-            <section className="min-w-screen h-10 flex flex-row items-center py-10 px-2 xxs:px-4 bg-white">
+            <section hidden={isError} className="min-w-screen h-10 flex flex-row items-center py-10 px-2 xxs:px-4 bg-white">
                 <button
                     onClick={() => handleScroll("prev")}
                     className="bg-primary rounded-full p-1 xxs:p-2 border border-primary transition-colors hover:bg-transparent cursor-pointer"
@@ -115,10 +129,8 @@ function BusinessCateogoriesCorosel() {
                     className="w-full flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
                     style={{ minHeight: '48px', minWidth: '120px', position: 'relative' }}
                 >
-                    {isFechingBusinessCategories ? (
-                        <div className="w-full flex items-center justify-center">
-                            <LoadingDots className="scale-125" />
-                        </div>
+                    {isFeching ? (
+                        <CategorySkeleton />
                     ) : (
                         <>
                             <button
