@@ -14,7 +14,7 @@ function ProfilesShowroom() {
 
                     {/*  */}
                     {requestedProfiles?.map((profile, idx) => (
-                        <div key={idx} className="bg-background border-2 border-primary text-secondary text-center  rounded-lg flex flex-col items-center justify-center pb-4 gap-y-2">
+                        <div key={idx} className="bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-2">
                             <Image className="w-full font-semibold object-cover" src={profile.pfpUrl} width={100} height={50} alt={profile.name} />
 
                             <h3 className="text-xl font-semibold">{profile.name}</h3>

@@ -9,25 +9,11 @@ import AddCategoryBtn from "./AddCategoryBtn";
 // 
 function Hero() {
     const { userLocation } = getGlobalProvider();
-    // const navigationItems = [
-    //     {
-    //         href: '/about-us',
-    //         label: 'About us',
-    //     },
-    //     {
-    //         href: '/terms-of-usage',
-    //         label: 'Terms Of Usage',
-    //     },
-    //     {
-    //         href: '/privacy-policy',
-    //         label: 'Privacy Policy',
-    //     }
-    // ]
 
     // 
     return (
         <>
-            <main className="min-w-screen pt-26 pb-4 bg-gradient-to-b from-background to-white flex items-center justify-center text-center">
+            <main className="min-w-screen pt-32 pb-4 bg-gradient-to-b from-background to-white flex items-center justify-center text-center">
                 <article className="md:w-1/2 xxs:1/1 flex flex-col items-center justify-center gap-y-6">
                     <header className="w-full flex flex-col items-center justify-center gap-y-3">
 

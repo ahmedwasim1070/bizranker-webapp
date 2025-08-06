@@ -7,7 +7,7 @@ import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 // Skeleton loader for category buttons
 const CategorySkeleton = () => (
     <div className="flex flex-row gap-x-2 w-full">
-        {[...Array(10)].map((_, idx) => (
+        {[...Array(15)].map((_, idx) => (
             <div
                 key={idx}
                 className="xs:h-12 xxs:h-10 w-22 xxs:w-34 rounded-lg bg-gray-400 animate-pulse"
