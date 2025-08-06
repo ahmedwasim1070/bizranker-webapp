@@ -1,29 +1,28 @@
 // Imports
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from 'framer-motion';
 import { Search } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
-import AddBusinessBtn from "./AddBusinessBtn";
+import AddCategoryBtn from "./AddCategoryBtn";
 
 // 
 function Hero() {
     const { userLocation } = getGlobalProvider();
-    const navigationItems = [
-        {
-            href: '/about-us',
-            label: 'About us',
-        },
-        {
-            href: '/terms-of-usage',
-            label: 'Terms Of Usage',
-        },
-        {
-            href: '/privacy-policy',
-            label: 'Privacy Policy',
-        }
-    ]
+    // const navigationItems = [
+    //     {
+    //         href: '/about-us',
+    //         label: 'About us',
+    //     },
+    //     {
+    //         href: '/terms-of-usage',
+    //         label: 'Terms Of Usage',
+    //     },
+    //     {
+    //         href: '/privacy-policy',
+    //         label: 'Privacy Policy',
+    //     }
+    // ]
 
     // 
     return (
@@ -73,7 +72,7 @@ function Hero() {
 
                         <p className="text-secondary my-2 md:text-md xxs:text-sm">Searching in <strong className="text-primary">{userLocation?.defaultCity || userLocation?.capital}</strong> , <strong>{userLocation?.countryCode}</strong></p>
 
-                        <nav className="my-2">
+                        {/* <nav className="my-2">
                             <ul className="flex gap-x-4 md:text-md xxs:text-sm">
                                 {navigationItems.map((item, idx) => (
                                     <li key={idx} className="text-secondary font-semibold transition-colors decoration-primary hover:text-primary hover:decoration-secondary group ">
@@ -81,9 +80,9 @@ function Hero() {
                                     </li>
                                 ))}
                             </ul>
-                        </nav>
+                        </nav> */}
 
-                        <AddBusinessBtn />
+                        <AddCategoryBtn />
 
                     </section>
                 </article>

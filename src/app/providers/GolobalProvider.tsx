@@ -6,7 +6,7 @@ import { FailedApiResponse, LocationDataContext, SuccessApiResponse } from "@/ty
 import { usePathname } from "next/navigation";
 // Components
 import LocationSelector from "@/components/LocationSelector";
-import AddBusiness from "@/components/AddBusiness";
+import AddCategory from "@/components/AddCategory";
 
 // Interfaces
 interface GlobalContextType {
@@ -148,7 +148,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             {isLocationPrompt && <LocationSelector />}
 
             {/*  */}
-            {isAddBusiness && <AddBusiness />}
+            {isAddBusiness && <AddCategory />}
 
             {children}
         </GlobalConext.Provider>
