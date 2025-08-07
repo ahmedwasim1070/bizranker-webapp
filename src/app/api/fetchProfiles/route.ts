@@ -76,7 +76,7 @@ const fetchWorldProfiles = async (categoryId: number) => {
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { category: true },
+        include: { category: true, votes: true },
         orderBy: { reviewRating: "desc" },
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
@@ -101,7 +101,7 @@ const fetchWorldProfiles = async (categoryId: number) => {
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { category: true },
+        include: { category: true, votes: true },
         where: {
           categoryId,
         },
@@ -165,7 +165,7 @@ const fetchCountryProfiles = async (
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { category: true },
+        include: { category: true, votes: true },
         where: { country },
         orderBy: { reviewRating: "desc" },
       });
@@ -191,7 +191,7 @@ const fetchCountryProfiles = async (
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { category: true },
+        include: { category: true, votes: true },
         where: {
           categoryId,
           country,
@@ -268,7 +268,7 @@ const fetchCityProfiles = async (
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { category: true },
+        include: { category: true, votes: true },
         where: { city, country },
         orderBy: { reviewRating: "desc" },
       });
@@ -294,7 +294,7 @@ const fetchCityProfiles = async (
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { category: true },
+        include: { category: true, votes: true },
         where: {
           categoryId,
           city,

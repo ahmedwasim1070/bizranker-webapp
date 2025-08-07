@@ -31,9 +31,10 @@ model BusinessProfile {
 }
 
 model Category {
-  id       Int               @id @default(autoincrement())
-  name     String            @unique
-  profiles BusinessProfile[]
+  id         Int               @id @default(autoincrement())
+  name       String            @unique
+  popularity BigInt
+  profiles   BusinessProfile[]
 }
 
 model UserVote {

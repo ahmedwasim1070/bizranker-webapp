@@ -1,3 +1,5 @@
+"use client";
+
 // Imports
 import { useState } from "react";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";

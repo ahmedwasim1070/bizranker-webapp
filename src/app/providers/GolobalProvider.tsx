@@ -16,6 +16,7 @@ interface GlobalContextType {
     selectedCategoryId: number;
     setSelectedCategoryId: (selectedCategoryId: number) => void;
     requestedProfiles: any[] | null;
+    isRequestingProfiles: boolean;
     requestedProfilesError: string | null;
 }
 interface GlobalProviderProps {
@@ -36,6 +37,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     const [isAddBusiness, setIsAddBusiness] = useState<boolean>(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
     const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
+    const [isRequestingProfiles, setIsRequistingProfiles] = useState<boolean>(false);
     const [requestedProfiles, setRequestedProfiles] = useState<any[] | null>(null);
 
     // Get and process cordinates
@@ -104,6 +106,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         if (!userLocation?.defaultCity)
             return;
 
+        setIsRequistingProfiles(true);
         const apiUrl = generateFetchProfilesApi();
 
         try {
@@ -111,6 +114,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             if (!res.ok) {
                 const errData = (await res.json()) as FailedApiResponse;
                 setRequestedProfilesError(errData.error);
+                setIsRequistingProfiles(false);
                 throw new Error(`Error , ${errData}`);
             }
 
@@ -119,7 +123,10 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             setRequestedProfiles(buisnessProfiles);
         } catch (err) {
             setRequestedProfilesError("Failed to Load Profiles.");
+            setIsRequistingProfiles(false);
             console.error("Failed to fetchProfiels : ", err);
+        } finally {
+            setIsRequistingProfiles(false);
         }
     }
 
@@ -132,7 +139,9 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     useEffect(() => {
         if (userLocation) {
             updateCookie();
-            fetchProfiles();
+            if (userLocation?.defaultCity) {
+                fetchProfiles();
+            }
         } else {
             setIsLocationPrompt(true);
         }
@@ -143,7 +152,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     }, [selectedCategoryId])
 
     return (
-        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId, requestedProfiles, requestedProfilesError }}>
+        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId, requestedProfiles, isRequestingProfiles, requestedProfilesError }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
 

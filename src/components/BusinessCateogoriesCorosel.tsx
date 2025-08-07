@@ -1,22 +1,26 @@
 // Imports
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 
-// Skeleton loader for category buttons
 const CategorySkeleton = () => {
-    {
-        return (
-            [...Array(15)].map((_, idx) => (
-                <div
+    return (
+        <>
+            {[...Array(15)].map((_, idx) => (
+                <motion.div
                     key={idx}
-                    className="md:min-w-32 xxs:min-w-18 flex flex-row items-center gap-x-1 xxs:gap-x-2 border  border-gray-400 bg-gray-400 rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  "
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="md:min-w-32 xxs:min-w-18 flex flex-row items-center gap-x-1 xxs:gap-x-2 border border-gray-300 bg-gray-300 rounded-lg px-3 py-2.5 text-nowrap group animate-pulse"
                 />
-            ))
-        );
-    }
+            ))}
+        </>
+    );
 };
+
 
 function BusinessCateogoriesCorosel() {
     // Context

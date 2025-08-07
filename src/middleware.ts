@@ -4,9 +4,10 @@ import { NextResponse } from "next/server";
 import { LocationDataContext } from "./types";
 
 //
-export async function middleware() {
+export async function middleware(request: Request) {
   const cookieStore = await cookies();
   const locationRawCookie = cookieStore.get("user_location")?.value;
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] ?? "UNKNOWN";
 
   if (locationRawCookie) return NextResponse.next();
 
