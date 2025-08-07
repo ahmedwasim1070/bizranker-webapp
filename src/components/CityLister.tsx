@@ -71,8 +71,8 @@ function CityLister({ customSelectCss }: CityListerProps) {
         >
 
             {!selectedCountryCapital &&
-                <option disabled hidden>
-                    Select Country
+                <option hidden>
+                    Select City
                 </option>
             }
 

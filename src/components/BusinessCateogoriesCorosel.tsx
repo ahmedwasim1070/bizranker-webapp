@@ -5,16 +5,18 @@ import { animate } from "framer-motion";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 
 // Skeleton loader for category buttons
-const CategorySkeleton = () => (
-    <div className="flex flex-row gap-x-2 w-full">
-        {[...Array(15)].map((_, idx) => (
-            <div
-                key={idx}
-                className="xs:h-12 xxs:h-10 w-22 xxs:w-34 rounded-lg bg-gray-400 animate-pulse"
-            />
-        ))}
-    </div>
-);
+const CategorySkeleton = () => {
+    {
+        return (
+            [...Array(15)].map((_, idx) => (
+                <div
+                    key={idx}
+                    className="md:min-w-32 xxs:min-w-18 flex flex-row items-center gap-x-1 xxs:gap-x-2 border  border-gray-400 bg-gray-400 rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  "
+                />
+            ))
+        );
+    }
+};
 
 function BusinessCateogoriesCorosel() {
     // Context
