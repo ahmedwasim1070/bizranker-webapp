@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -14,37 +8,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id                  Int    @id @default(autoincrement())
+  provider            String
+  accountId           String @unique
+  accountIdToken      String @unique
+  accountRefreshToken String @unique
+  userId              Int
+  user                User   @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id               Int                @id @default(autoincrement())
+  name             String
+  email            String             @unique
+  Account          Account[]
+  BusinessProfile  BusinessProfile[]
+  CustomCategories CustomCategories[]
+  Votes            Votes[]
+}
+
 model BusinessProfile {
-  id           Int        @id @default(autoincrement())
-  name         String     @unique
-  pfpUrl       String     @unique
-  categoryId   Int
-  category     Category   @relation(fields: [categoryId], references: [id])
-  city         String
-  country      String
-  owner        String
-  phone        String?
-  website      String?
-  reviewRating Float?
-  reviewAmount Int?
-  votes        UserVote[]
+  id               Int      @id @default(autoincrement())
+  profileId        Int      @unique
+  name             String   @unique
+  pfp              String   @unique
+  category         String
+  address          String
+  city             String
+  country          String
+  customCategories String[]
+  phone            String
+  website          String
+  addedById        Int
+  user             User     @relation(fields: [addedById], references: [id])
+  votes            Votes[]
 }
 
-model Category {
-  id         Int               @id @default(autoincrement())
-  name       String            @unique
-  popularity BigInt
-  profiles   BusinessProfile[]
+model CustomCategories {
+  id        Int    @id @default(autoincrement())
+  name      String @unique
+  createdAt String
+  aurtherId Int
+  user      User   @relation(fields: [aurtherId], references: [id])
 }
 
-model UserVote {
-  id        Int             @id @default(autoincrement())
-  ip        String
-  profileId Int
-  profile   BusinessProfile @relation(fields: [profileId], references: [id])
-  type      VoteType
+model Votes {
+  id        Int      @id @default(autoincrement())
+  voteType  VoteType
+  votedById Int
 
-  @@unique([ip, profileId])
+  user              User            @relation(fields: [votedById], references: [id])
+  businessProfileId Int
+  BusinessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+
+  @@unique([votedById, businessProfileId])
 }
 
 enum VoteType {

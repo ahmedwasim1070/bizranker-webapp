@@ -54,7 +54,7 @@ const ErrorThrower = ({ requestedProfilesError }: ErrorThrowerProps) => (
 // Profile Renderer
 const RenderProfiles = ({ profile }: RenderProfilesProps) => (
     <div className=" bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-2">
-        <Image className="w-full h-48 rounded-t-lg font-semibold object-cover" src={'/2023-05-09.jpg'} width={100} height={48} alt={profile.name} />
+        <Image className="w-full h-48 rounded-t-lg font-semibold object-cover" src={''} width={100} height={48} alt={profile.name} />
 
         <h3 className="text-xl font-semibold">{profile.name}</h3>
 
@@ -111,8 +111,6 @@ function ProfilesShowroom() {
                     {/* Profiles */}
                     {requestedProfiles?.map((profile, idx) => (
                         <>
-                            <RenderProfiles profile={profile} key={idx} />
-                            <RenderProfiles profile={profile} key={idx} />
                             <RenderProfiles profile={profile} key={idx} />
                         </>
                     ))}

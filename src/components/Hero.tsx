@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 import AddCategoryBtn from "./AddCategoryBtn";
+import GoogleAccountBtn from "./GoogleAuthBtn";
 
 // 
 function Hero() {
@@ -58,15 +59,7 @@ function Hero() {
 
                         <p className="text-secondary my-2 md:text-md xxs:text-sm">Searching in <strong className="text-primary">{userLocation?.defaultCity || userLocation?.capital}</strong> , <strong>{userLocation?.countryCode}</strong></p>
 
-                        {/* <nav className="my-2">
-                            <ul className="flex gap-x-4 md:text-md xxs:text-sm">
-                                {navigationItems.map((item, idx) => (
-                                    <li key={idx} className="text-secondary font-semibold transition-colors decoration-primary hover:text-primary hover:decoration-secondary group ">
-                                        <span className="text-primary group-hover:text-secondary">| </span><Link href={item.href} className="underline">{item.label}</Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav> */}
+                        <GoogleAccountBtn />
 
                         <AddCategoryBtn />
 

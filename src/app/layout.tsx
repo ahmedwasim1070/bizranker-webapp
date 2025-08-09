@@ -10,8 +10,8 @@ import Footer from "@/components/Footer";
 
 // Header
 export const metadata: Metadata = {
-	title: "BizRanker",
-	description: "later .....",
+	title: "RankedPlaces",
+	description: "A unique way to Rank Businesses.",
 };
 
 // 

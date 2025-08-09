@@ -7,11 +7,13 @@ import { usePathname } from "next/navigation";
 // Components
 import LocationSelector from "@/components/LocationSelector";
 import AddCategory from "@/components/AddCategory";
+import GoogleAuth from "@/components/GoogleAuth";
 
 // Interfaces
 interface GlobalContextType {
     userLocation: LocationDataContext | null;
     setUserLocation: (location: LocationDataContext | null) => void;
+    setIsGoogleAuth: (isGoogleAuth: boolean) => void;
     setIsAddBusiness: (isAddBusiness: boolean) => void;
     selectedCategoryId: number;
     setSelectedCategoryId: (selectedCategoryId: number) => void;
@@ -35,6 +37,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     const [userLocation, setUserLocation] = useState<LocationDataContext | null>(locationData || null);
     const [isLocationPrompt, setIsLocationPrompt] = useState<boolean>(false);
     const [isAddBusiness, setIsAddBusiness] = useState<boolean>(false);
+    const [isGoogleAuth, setIsGoogleAuth] = useState<boolean>(false);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
     const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
     const [isRequestingProfiles, setIsRequistingProfiles] = useState<boolean>(false);
@@ -124,7 +127,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         } catch (err) {
             setRequestedProfilesError("Failed to Load Profiles.");
             setIsRequistingProfiles(false);
-            console.error("Failed to fetchProfiels : ", err);
+            console.error("Failed to fetchProfiles : ", err);
         } finally {
             setIsRequistingProfiles(false);
         }
@@ -152,15 +155,18 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     }, [selectedCategoryId])
 
     return (
-        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId, requestedProfiles, isRequestingProfiles, requestedProfilesError }}>
+        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsGoogleAuth, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId, requestedProfiles, isRequestingProfiles, requestedProfilesError }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
+
+            {/*  */}
+            {isGoogleAuth && <GoogleAuth />}
 
             {/*  */}
             {isAddBusiness && <AddCategory />}
 
             {children}
-        </GlobalConext.Provider>
+        </GlobalConext.Provider >
     );
 }
 

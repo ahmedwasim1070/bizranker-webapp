@@ -1,6 +1,5 @@
 // Imports
 import { categoryFormData } from "@/lib/api/validator";
-import { prisma } from "@/lib/prismaClient";
 import { FailedApiResponse } from "@/types";
 import { NextResponse } from "next/server";
 
