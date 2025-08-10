@@ -143,7 +143,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         if (userLocation) {
             updateCookie();
             if (userLocation?.defaultCity) {
-                fetchProfiles();
+                // fetchProfiles();
             }
         } else {
             setIsLocationPrompt(true);
@@ -151,7 +151,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     }, [userLocation]);
     // On category change
     useEffect(() => {
-        fetchProfiles();
+        // fetchProfiles();
     }, [selectedCategoryId])
 
     return (

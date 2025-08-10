@@ -40,6 +40,8 @@ model BusinessProfile {
   customCategories String[]
   phone            String
   website          String
+  reviewValue      Float
+  reviewAmount     Int
   addedById        Int
   user             User     @relation(fields: [addedById], references: [id])
   votes            Votes[]

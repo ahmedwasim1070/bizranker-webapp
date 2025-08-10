@@ -76,8 +76,8 @@ const fetchWorldProfiles = async (categoryId: number) => {
   try {
     if (categoryId === 0) {
       const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { category: true, votes: true },
-        orderBy: { reviewRating: "desc" },
+        include: { votes: true },
+        orderBy: { reviewValue: "desc" },
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -101,7 +101,7 @@ const fetchWorldProfiles = async (categoryId: number) => {
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { category: true, votes: true },
+        include: { votes: true },
         where: {
           categoryId,
         },
