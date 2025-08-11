@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prismaClient";
 import { FailedApiResponse, SuccessApiResponse } from "@/types";
+import { validateCategory } from "@/lib/api/validator";
 
 //
 export async function GET(request: Request) {
@@ -22,40 +23,26 @@ export async function GET(request: Request) {
     );
   }
 
-  const category = searchParams.get("categoryId");
-  if (!category) {
+  const category = searchParams.get("category");
+  const errorInCategory = await validateCategory(category);
+  if (errorInCategory) {
     return NextResponse.json<FailedApiResponse>(
       {
         success: false,
-        error: "Category is Required.",
+        error: errorInCategory,
       },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  const categoryId = parseInt(category);
-  if (categoryId < 0) {
-    return NextResponse.json<FailedApiResponse>(
-      {
-        success: false,
-        error: "Category ID is Invalid.",
-      },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 
   try {
     switch (requestType) {
       case "worldProfiles":
-        return await fetchWorldProfiles(categoryId);
+        return await fetchWorldProfiles(category);
       case "countryProfiles":
-        return await fetchCountryProfiles(searchParams, categoryId);
+        return await fetchCountryProfiles(searchParams, category);
       case "cityProfiles":
-        return await fetchCityProfiles(searchParams, categoryId);
+        return await fetchCityProfiles(searchParams, category);
     }
   } catch (error) {
     console.error("Error in fetchProfiles API , ", error);
@@ -72,13 +59,10 @@ export async function GET(request: Request) {
 }
 
 // For RequestType of World Profiles
-const fetchWorldProfiles = async (categoryId: number) => {
+const fetchWorldProfiles = async (category: string) => {
   try {
-    if (categoryId === 0) {
-      const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { votes: true },
-        orderBy: { reviewValue: "desc" },
-      });
+    if (category === "all") {
+      const profilesOfAll = await prisma.businessProfile.findMany();
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
           {
@@ -101,12 +85,14 @@ const fetchWorldProfiles = async (categoryId: number) => {
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { votes: true },
         where: {
-          categoryId,
-        },
-        orderBy: {
-          reviewRating: "desc",
+          customCategories: {
+            some: {
+              customCategory: {
+                name: category,
+              },
+            },
+          },
         },
       });
       if (!profilesOfCategory || profilesOfCategory.length === 0) {
@@ -147,7 +133,7 @@ const fetchWorldProfiles = async (categoryId: number) => {
 // For RequestType of Country Profiles
 const fetchCountryProfiles = async (
   params: URLSearchParams,
-  categoryId: number
+  category: string
 ) => {
   const country = params.get("country");
   if (!country || typeof country !== "string") {
@@ -163,11 +149,9 @@ const fetchCountryProfiles = async (
   }
 
   try {
-    if (categoryId === 0) {
+    if (category === "all") {
       const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { category: true, votes: true },
         where: { country },
-        orderBy: { reviewRating: "desc" },
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -191,13 +175,15 @@ const fetchCountryProfiles = async (
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { category: true, votes: true },
         where: {
-          categoryId,
+          customCategories: {
+            some: {
+              customCategory: {
+                name: category,
+              },
+            },
+          },
           country,
-        },
-        orderBy: {
-          reviewRating: "desc",
         },
       });
       if (!profilesOfCategory || profilesOfCategory.length === 0) {
@@ -236,10 +222,7 @@ const fetchCountryProfiles = async (
 };
 
 // For RequestType of City Profiles
-const fetchCityProfiles = async (
-  params: URLSearchParams,
-  categoryId: number
-) => {
+const fetchCityProfiles = async (params: URLSearchParams, category: string) => {
   const country = params.get("country");
   if (!country || typeof country !== "string") {
     return NextResponse.json<FailedApiResponse>(
@@ -266,11 +249,9 @@ const fetchCityProfiles = async (
   }
 
   try {
-    if (categoryId === 0) {
+    if (category === "all") {
       const profilesOfAll = await prisma.businessProfile.findMany({
-        include: { category: true, votes: true },
         where: { city, country },
-        orderBy: { reviewRating: "desc" },
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -294,14 +275,16 @@ const fetchCityProfiles = async (
       );
     } else {
       const profilesOfCategory = await prisma.businessProfile.findMany({
-        include: { category: true, votes: true },
         where: {
-          categoryId,
+          customCategories: {
+            some: {
+              customCategory: {
+                name: category,
+              },
+            },
+          },
           city,
           country,
-        },
-        orderBy: {
-          reviewRating: "desc",
         },
       });
       if (!profilesOfCategory || profilesOfCategory.length === 0) {

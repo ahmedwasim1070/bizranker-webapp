@@ -24,7 +24,7 @@ const CategorySkeleton = () => {
 
 function BusinessCateogoriesCorosel() {
     // Context
-    const { selectedCategoryId, setSelectedCategoryId } = getGlobalProvider();
+    const { selectedCategory, setSelectedCategory } = getGlobalProvider();
     // Refs
     const sliderRef = useRef(null);
     // States
@@ -105,9 +105,9 @@ function BusinessCateogoriesCorosel() {
     };
     // handle category btn click
     const handleCategoryChange = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const categoryId = parseInt((e.target as HTMLButtonElement).value);
-        if (selectedCategoryId !== categoryId) {
-            setSelectedCategoryId(categoryId);
+        const category = (e.target as HTMLButtonElement).value;
+        if (selectedCategory !== category) {
+            setSelectedCategory(category);
         }
     }
 
@@ -144,18 +144,18 @@ function BusinessCateogoriesCorosel() {
                                 onClick={handleCategoryChange}
                                 type="button"
                                 aria-label="Change Category"
-                                className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategoryId === 0 ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
+                                className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategory === "all" ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
                             >
                                 All
                             </button>
                             {businessCategories && businessCategories.map((category, idx) => (
                                 <button
                                     key={idx}
-                                    value={category.id}
+                                    value={category.name}
                                     onClick={handleCategoryChange}
                                     type="button"
                                     aria-label="Change Category"
-                                    className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategoryId === category.id ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
+                                    className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategory === category.name ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
                                 >
                                     Top{" "}{category.name}
                                 </button>

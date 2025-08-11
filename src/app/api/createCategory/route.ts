@@ -1,6 +1,9 @@
 // Imports
-import { categoryFormData } from "@/lib/api/validator";
-import { FailedApiResponse } from "@/types";
+import {
+  validateCategory,
+  validateCategoryFormData,
+} from "@/lib/api/validator";
+import { FailedApiResponse, SuccessApiResponse } from "@/types";
 import { NextResponse } from "next/server";
 
 // Interfaces
@@ -16,12 +19,29 @@ export async function POST(request: Request) {
 
     const { categoryPhrase, categoryKeyword } = body;
 
-    const error = categoryFormData(categoryPhrase, categoryKeyword);
-    if (error) {
+    const errorInCategoryForm = validateCategoryFormData(
+      categoryPhrase,
+      categoryKeyword
+    );
+    if (errorInCategoryForm) {
       return NextResponse.json<FailedApiResponse>(
         {
           success: false,
-          error,
+          error: errorInCategoryForm,
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const customCategory = categoryPhrase.trim() + categoryKeyword.trim();
+    const errorOfCategoryExsistance = await validateCategory(customCategory);
+    if (errorOfCategoryExsistance === null) {
+      return NextResponse.json<FailedApiResponse>(
+        {
+          success: false,
+          error: "Category already Exsists.",
         },
         {
           status: 400,

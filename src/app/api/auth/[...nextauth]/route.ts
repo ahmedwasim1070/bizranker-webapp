@@ -2,7 +2,7 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import type { JWT } from "next-auth/jwt";
-import type { Account, Session } from "next-auth";
+import type { Session, User } from "next-auth";
 import { prisma } from "@/lib/prismaClient";
 
 //
@@ -12,57 +12,27 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
   ],
 
   // After Call
   callbacks: {
     // Create if not exsists else Upgrades
-    async signIn({ user, account }) {
+    async signIn({ profile }) {
       try {
-        if (!user.email || !account.providerAccountId) {
-          console.error("Missing user or account data from Google");
+        if (!profile.email) {
+          console.error("No profile found !");
           return false;
         }
 
         await prisma.user.upsert({
-          where: { email: user.email! },
+          where: { email: profile.email! },
           update: {
-            name: user.name,
-            Account: {
-              upsert: {
-                where: { accountId: account?.providerAccountId! },
-                update: {
-                  accountIdToken: account?.id_token!,
-                  accountRefreshToken: account?.refresh_token!,
-                },
-                create: {
-                  provider: account?.provider!,
-                  accountId: account?.providerAccountId!,
-                  accountIdToken: account?.id_token!,
-                  accountRefreshToken: account?.refresh_token!,
-                },
-              },
-            },
+            name: profile.name,
           },
           create: {
-            name: user.name,
-            email: user.email!,
-            Account: {
-              create: {
-                provider: account?.provider!,
-                accountId: account?.providerAccountId!,
-                accountIdToken: account?.id_token!,
-                accountRefreshToken: account?.refresh_token!,
-              },
-            },
+            email: profile.email,
+            name: profile.name,
           },
         });
         return true;
@@ -73,26 +43,29 @@ export const authOptions: NextAuthOptions = {
     },
 
     // Creates JWT
-    async jwt({ token, account }: { token: JWT; account?: Account | null }) {
-      if (account) {
-        token.accessToken = account?.access_token;
-        token.expiry = account.expires_at;
+    async jwt({ token, user }: { token: JWT; user?: User | null }) {
+      if (user) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (dbUser) {
+          token.email = dbUser.email;
+          token.name = dbUser.name;
+        }
       }
+
       return token;
     },
 
     // Creates Sessoin
     async session({ session, token }: { session: Session; token: JWT }) {
-      session.accessToken = token.accessToken;
+      session.user.name = token.name;
+      session.user.email = token.email;
       return session;
     },
   },
 };
-
-async function updateAccessToken(token: JWT) {
-  try {
-  } catch (error) {}
-}
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

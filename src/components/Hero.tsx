@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { Search } from "lucide-react";
 import { Typewriter } from "react-simple-typewriter";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
+// Components
 import AddCategoryBtn from "./AddCategoryBtn";
 import GoogleAccountBtn from "./GoogleAuthBtn";
+import { SessionProvider } from "next-auth/react";
 
 // 
 function Hero() {
@@ -59,9 +61,10 @@ function Hero() {
 
                         <p className="text-secondary my-2 md:text-md xxs:text-sm">Searching in <strong className="text-primary">{userLocation?.defaultCity || userLocation?.capital}</strong> , <strong>{userLocation?.countryCode}</strong></p>
 
-                        <GoogleAccountBtn />
-
-                        <AddCategoryBtn />
+                        <SessionProvider>
+                            <GoogleAccountBtn />
+                            <AddCategoryBtn />
+                        </SessionProvider>
 
                     </section>
                 </article>

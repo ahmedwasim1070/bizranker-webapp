@@ -6,12 +6,25 @@ import { NextResponse } from "next/server";
 //
 export async function GET(request: Request) {
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.customCategories.findMany({
+      include: {
+        _count: {
+          select: {
+            businessProfiles: true,
+          },
+        },
+      },
+      orderBy: {
+        businessProfiles: {
+          _count: "desc",
+        },
+      },
+    });
     if (!categories || categories.length === 0) {
       return NextResponse.json<FailedApiResponse>(
         {
           success: false,
-          error: "No categories exsists in DB",
+          error: "No categories found.",
         },
         { status: 404 }
       );

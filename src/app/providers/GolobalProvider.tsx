@@ -2,7 +2,7 @@
 
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { FailedApiResponse, LocationDataContext, SuccessApiResponse } from "@/types";
+import { FailedApiResponse, LocationData, SessionData, SuccessApiResponse } from "@/types";
 import { usePathname } from "next/navigation";
 // Components
 import LocationSelector from "@/components/LocationSelector";
@@ -11,19 +11,19 @@ import GoogleAuth from "@/components/GoogleAuth";
 
 // Interfaces
 interface GlobalContextType {
-    userLocation: LocationDataContext | null;
-    setUserLocation: (location: LocationDataContext | null) => void;
+    userLocation: LocationData | null;
+    setUserLocation: (location: LocationData | null) => void;
     setIsGoogleAuth: (isGoogleAuth: boolean) => void;
-    setIsAddBusiness: (isAddBusiness: boolean) => void;
-    selectedCategoryId: number;
-    setSelectedCategoryId: (selectedCategoryId: number) => void;
+    setIsAddCategory: (isAddCategory: boolean) => void;
+    selectedCategory: string;
+    setSelectedCategory: (selectedCategory: string) => void;
     requestedProfiles: any[] | null;
     isRequestingProfiles: boolean;
     requestedProfilesError: string | null;
 }
 interface GlobalProviderProps {
     children: ReactNode;
-    locationData: LocationDataContext | null;
+    locationData: LocationData | null;
 }
 
 // Global context
@@ -34,11 +34,11 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     // Path
     const pathname = usePathname();
     // States
-    const [userLocation, setUserLocation] = useState<LocationDataContext | null>(locationData || null);
+    const [userLocation, setUserLocation] = useState<LocationData | null>(locationData || null);
     const [isLocationPrompt, setIsLocationPrompt] = useState<boolean>(false);
-    const [isAddBusiness, setIsAddBusiness] = useState<boolean>(false);
+    const [isAddCategory, setIsAddCategory] = useState<boolean>(false);
     const [isGoogleAuth, setIsGoogleAuth] = useState<boolean>(false);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+    const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
     const [isRequestingProfiles, setIsRequistingProfiles] = useState<boolean>(false);
     const [requestedProfiles, setRequestedProfiles] = useState<any[] | null>(null);
@@ -102,7 +102,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             default:
                 type = "cityProfiles";
         }
-        return `/api/fetchProfiles/?requestType=${type}&categoryId=${selectedCategoryId}&country=${userLocation?.country}&city=${userLocation?.defaultCity}`;
+        return `/api/fetchProfiles/?requestType=${type}&category=${selectedCategory}&country=${userLocation?.country}&city=${userLocation?.defaultCity}`;
     }
     // Fetches Profiles
     const fetchProfiles = async () => {
@@ -143,7 +143,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         if (userLocation) {
             updateCookie();
             if (userLocation?.defaultCity) {
-                // fetchProfiles();
+                fetchProfiles();
             }
         } else {
             setIsLocationPrompt(true);
@@ -151,11 +151,21 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     }, [userLocation]);
     // On category change
     useEffect(() => {
-        // fetchProfiles();
-    }, [selectedCategoryId])
+        fetchProfiles();
+    }, [selectedCategory])
 
     return (
-        <GlobalConext.Provider value={{ userLocation, setUserLocation, setIsGoogleAuth, setIsAddBusiness, selectedCategoryId, setSelectedCategoryId, requestedProfiles, isRequestingProfiles, requestedProfilesError }}>
+        <GlobalConext.Provider value={{
+            userLocation,
+            setUserLocation,
+            setIsGoogleAuth,
+            setIsAddCategory,
+            selectedCategory,
+            setSelectedCategory,
+            requestedProfiles,
+            isRequestingProfiles,
+            requestedProfilesError
+        }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
 
@@ -163,7 +173,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             {isGoogleAuth && <GoogleAuth />}
 
             {/*  */}
-            {isAddBusiness && <AddCategory />}
+            {isAddCategory && <AddCategory />}
 
             {children}
         </GlobalConext.Provider >

@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	try {
 		locationData = locationRawCookie ? JSON.parse(locationRawCookie) : null;
 	} catch (error) {
-		console.error("Error parsing location cookei", error);
+		console.error("Error while Parsing Cookie. ,", error);
 		locationData = null;
 	}
 

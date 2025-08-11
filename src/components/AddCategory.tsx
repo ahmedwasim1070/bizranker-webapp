@@ -10,7 +10,7 @@ import { rankingPhrases } from "@/lib/constants/rankingPhrases";
 // 
 function AddCategory() {
     // Context
-    const { setIsAddBusiness } = getGlobalProvider();
+    const { setIsAddCategory } = getGlobalProvider();
     // States
     const [formValues, setFormValues] = useState({
         categoryPhrase: "",
@@ -62,7 +62,7 @@ function AddCategory() {
                 >
                     {/* Close Button */}
                     <button
-                        onClick={() => setIsAddBusiness(false)}
+                        onClick={() => setIsAddCategory(false)}
                         className="absolute top-2 xs:top-4 right-2 xs:right-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-secondary/10 transition-colors cursor-pointer shadow-lg"
                     >
                         <X className="w-6 h-6 xs:w-7 xs:h-7" style={{ color: '#273f4f' }} />

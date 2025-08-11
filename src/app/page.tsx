@@ -13,6 +13,8 @@ function Home() {
 		<>
 			<section>
 				<Hero />
+				<BusinessCateogoriesCorosel />
+				<ProfilesShowroom />
 			</section>
 		</>
 	)
