@@ -4,10 +4,12 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { FailedApiResponse, LocationData, SessionData, SuccessApiResponse } from "@/types";
 import { usePathname } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
 // Components
 import LocationSelector from "@/components/LocationSelector";
 import AddCategory from "@/components/AddCategory";
 import GoogleAuth from "@/components/GoogleAuth";
+import AddPlace from "@/components/AddPlace";
 
 // Interfaces
 interface GlobalContextType {
@@ -15,6 +17,7 @@ interface GlobalContextType {
     setUserLocation: (location: LocationData | null) => void;
     setIsGoogleAuth: (isGoogleAuth: boolean) => void;
     setIsAddCategory: (isAddCategory: boolean) => void;
+    setIsAddPlace: (isAddPlace: boolean) => void;
     selectedCategory: string;
     setSelectedCategory: (selectedCategory: string) => void;
     requestedProfiles: any[] | null;
@@ -38,6 +41,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     const [isLocationPrompt, setIsLocationPrompt] = useState<boolean>(false);
     const [isAddCategory, setIsAddCategory] = useState<boolean>(false);
     const [isGoogleAuth, setIsGoogleAuth] = useState<boolean>(false);
+    const [isAddPlace, setIsAddPlace] = useState<boolean>(false);
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
     const [isRequestingProfiles, setIsRequistingProfiles] = useState<boolean>(false);
@@ -63,7 +67,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
 
                     setUserLocation({ ...userLocation, defaultCity: latNlngInfo.city || latNlngInfo.town || latNlngInfo.village });
                 } catch (err) {
-                    console.error("Failed to fetchLiveLocation continuing with capital :", err);
+                    console.error("Failed to fetchLiveLocation continuing with capital : ,", err);
                     setUserLocation({ ...userLocation, defaultCity: userLocation.capital })
                 }
             },
@@ -160,6 +164,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             setUserLocation,
             setIsGoogleAuth,
             setIsAddCategory,
+            setIsAddPlace,
             selectedCategory,
             setSelectedCategory,
             requestedProfiles,
@@ -173,7 +178,14 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             {isGoogleAuth && <GoogleAuth />}
 
             {/*  */}
-            {isAddCategory && <AddCategory />}
+            <SessionProvider>
+                {/*  */}
+                {isAddCategory && <AddCategory />}
+
+                {/*  */}
+                {true && <AddPlace />}
+            </SessionProvider>
+
 
             {children}
         </GlobalConext.Provider >

@@ -1,7 +1,8 @@
 // Session
 export type SessionData = {
-  name?: string | null;
-  email?: string | null;
+  userId?: string;
+  name?: string;
+  email?: string;
   isAuthenticated: boolean;
 };
 // Location Data Payload

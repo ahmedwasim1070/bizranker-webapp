@@ -35,11 +35,12 @@ export const validateCategory: ValidateCategory = async (category) => {
   if (category === "all") return null;
 
   try {
-    const res = await fetch("/api/fetchedCategories");
+    const res = await fetch("/api/fetchCategories");
     if (!res.ok) {
       const errData = (await res.json()) as FailedApiResponse;
       throw new Error(`Error , ${errData.error}`);
     }
+
     const data = (await res.json()) as SuccessApiResponse;
     const allCategoriesInDb = data.data;
 

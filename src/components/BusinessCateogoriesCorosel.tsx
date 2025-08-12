@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 
+//  Loader
 const CategorySkeleton = () => {
     return (
         <>
@@ -22,6 +23,7 @@ const CategorySkeleton = () => {
 };
 
 
+// 
 function BusinessCateogoriesCorosel() {
     // Context
     const { selectedCategory, setSelectedCategory } = getGlobalProvider();
@@ -140,7 +142,7 @@ function BusinessCateogoriesCorosel() {
                     ) : (
                         <>
                             <button
-                                value={0}
+                                value={'all'}
                                 onClick={handleCategoryChange}
                                 type="button"
                                 aria-label="Change Category"
@@ -157,7 +159,7 @@ function BusinessCateogoriesCorosel() {
                                     aria-label="Change Category"
                                     className={`flex flex-row items-center font-semibold text-xxs xxs:text-base gap-x-1 xxs:gap-x-2 border  border-secondary bg-secondary rounded-lg px-3 py-2.5 text-nowrap  group transition-colors  ${selectedCategory === category.name ? 'bg-transparent text-secondary' : 'text-white hover:bg-transparent hover:text-secondary cursor-pointer'}`}
                                 >
-                                    Top{" "}{category.name}
+                                    {category.name}
                                 </button>
                             ))}
                         </>

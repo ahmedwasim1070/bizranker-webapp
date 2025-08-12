@@ -17,24 +17,27 @@ export const authOptions: NextAuthOptions = {
 
   // After Call
   callbacks: {
-    // Create if not exsists else Upgrades
-    async signIn({ profile }) {
+    async signIn({ profile, account }) {
       try {
-        if (!profile.email) {
-          console.error("No profile found !");
+        const providerUserId = account?.providerAccountId;
+        if (!providerUserId || !profile?.email) {
+          console.error("No profile found!");
           return false;
         }
 
+        // Upsert user
         await prisma.user.upsert({
-          where: { email: profile.email! },
+          where: { userId: providerUserId },
           update: {
             name: profile.name,
           },
           create: {
+            userId: providerUserId,
             email: profile.email,
             name: profile.name,
           },
         });
+
         return true;
       } catch (error) {
         console.error("Sign-in error:", error);
@@ -42,13 +45,16 @@ export const authOptions: NextAuthOptions = {
       }
     },
 
-    // Creates JWT
-    async jwt({ token, user }: { token: JWT; user?: User | null }) {
-      if (user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email },
-        });
+    // JWT call
+    async jwt({ token, account, profile }) {
+      if (account && profile) {
+        token.userId = account.providerAccountId;
+      }
 
+      if (token.userId) {
+        const dbUser = await prisma.user.findUnique({
+          where: { userId: token.userId },
+        });
         if (dbUser) {
           token.email = dbUser.email;
           token.name = dbUser.name;
@@ -58,8 +64,9 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    // Creates Sessoin
-    async session({ session, token }: { session: Session; token: JWT }) {
+    // Session call
+    async session({ session, token }) {
+      session.user.userId = token.userId;
       session.user.name = token.name;
       session.user.email = token.email;
       return session;

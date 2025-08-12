@@ -1,5 +1,6 @@
 // Imports
 import type { Metadata } from "next";
+import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import { cookies } from "next/headers";
 // Provider
@@ -7,6 +8,7 @@ import { GlobalProvider } from "./providers/GolobalProvider";
 // Components
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ToastContainer } from "react-toastify";
 
 // Header
 export const metadata: Metadata = {
@@ -30,6 +32,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	return (
 		<html lang="en">
 			<body>
+				<ToastContainer position="top-right" autoClose={3000} />
 				<GlobalProvider locationData={locationData} >
 					<Header />
 					{children}

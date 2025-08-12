@@ -1,18 +1,25 @@
 "use client";
 
 // Imports
-import { useState } from "react";
+import React, { useState } from "react";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { rankingPhrases } from "@/lib/constants/rankingPhrases";
+import { useSession } from "next-auth/react";
+import { FailedApiResponse, SuccessApiResponse } from "@/types";
+import { toast } from "react-toastify";
+import LoadingDots from "./LoadingDots";
 
 // 
 function AddCategory() {
+    // Session Context
+    const { data: session, status } = useSession();
     // Context
     const { setIsAddCategory } = getGlobalProvider();
     // States
-    const [formValues, setFormValues] = useState({
+    const [formData, setFormData] = useState({
+        userId: session.user.userId,
         categoryPhrase: "",
         categoryKeyword: "",
     })
@@ -21,32 +28,57 @@ function AddCategory() {
         categoryKeyword: false,
     })
     const [disableSubmit, setDisableSubmit] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Handle Submit 
-    const handleSubmit = () => {
-        const isError = validateForm();
-        if (!isError) {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const isError = Object.values(formErrors).some(Boolean);
+        setDisableSubmit(isError ? isError : status === 'authenticated');
+        if (!isError && status === 'authenticated') {
+            setIsLoading(true);
+            setDisableSubmit(true);
+            try {
+                const res = await fetch('/api/createCategory', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData),
+                });
+                if (!res.ok) {
+                    const errData = (await res.json()) as FailedApiResponse;
+                    setFormData({ ...formData, categoryKeyword: "" })
+                    toast.error(errData.error);
+                    throw new Error(`${errData.error}`);
+                }
 
+                const data = (await res.json()) as SuccessApiResponse;
+                toast.success(data.message);
+                setIsAddCategory(false);
+            } catch (err) {
+                console.error("Failed to createCategory : ,", err);
+            } finally {
+                setDisableSubmit(false);
+                setIsLoading(false);
+            }
         }
-        setDisableSubmit(true);
     }
     // Validates Form values
     const validateForm = () => {
-        if (!rankingPhrases.includes(formValues.categoryPhrase)) {
+        if (!rankingPhrases.includes(formData.categoryPhrase)) {
             setFormErrors({ ...formErrors, categoryPhrase: true });
-            return true;
         }
-        if (!/^[A-Za-z\s]+$/.test(formValues.categoryKeyword.trim()) && formValues.categoryKeyword.length > 20) {
+        if (!/^[A-Za-z\s]+$/.test(formData.categoryKeyword.trim()) && formData.categoryKeyword.length > 20) {
             setFormErrors({ ...formErrors, categoryKeyword: true });
-            return true;
         }
-        return false;
     }
     // Handle Change
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+        validateForm();
         setFormErrors({ ...formErrors, [name]: false });
-        setFormValues({ ...formValues, [name]: value });
+        setFormData({ ...formData, [name]: value });
         setDisableSubmit(false);
     }
 
@@ -68,7 +100,7 @@ function AddCategory() {
                         <X className="w-6 h-6 xs:w-7 xs:h-7" style={{ color: '#273f4f' }} />
                     </button>
 
-                    <form className="flex flex-col justify-center items-center gap-y-3 xs:gap-y-4 w-full">
+                    <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center gap-y-3 xs:gap-y-4 w-full">
                         <motion.h2
                             className="text-xl xs:text-2xl font-bold text-secondary"
                             initial={{ opacity: 0, y: -20 }}
@@ -97,7 +129,7 @@ function AddCategory() {
                                         Phrase :
                                     </motion.label>
                                     <select required name="categoryPhrase" onChange={handleChange} className="min-w-full text-primary outline-none p-2 bg-background font-semibold cursor-pointer rounded-lg border-3 border-gray-400 focus:border-primary">
-                                        {formValues.categoryPhrase === "" &&
+                                        {formData.categoryPhrase === "" &&
                                             <option hidden>
                                                 Select Phrase
                                             </option>
@@ -134,7 +166,7 @@ function AddCategory() {
                                         type="text"
                                         required
                                         name="categoryKeyword"
-                                        value={formValues.categoryKeyword}
+                                        value={formData.categoryKeyword}
                                         className="min-w-full border-3 border-gray-400 text-secondary outline-none rounded-lg px-2 py-2 focus:border-primary transition-all"
                                         onChange={handleChange}
                                         placeholder="e.g (Pizza Place)"
@@ -156,15 +188,16 @@ function AddCategory() {
                             </div>
                         </motion.div>
 
-                        <p className="text-secondary font-semibold flex flex-row items-center gap-x-1"><span>Category :</span> <span className={`${formValues.categoryPhrase === "" ? 'text-red-500' : 'text-primary'}`}>{formValues.categoryPhrase === "" ? "(Pharse Required) ," : formValues.categoryPhrase}</span><span className={`${formValues.categoryKeyword === "" ? 'text-red-500' : 'text-primary'}`}>{formValues.categoryKeyword === "" ? "(Keyword Required)" : formValues.categoryKeyword}</span></p>
+                        <p className="text-secondary font-semibold flex flex-row items-center gap-x-1"><span>Category :</span> <span className={`${formData.categoryPhrase === "" ? 'text-red-500' : 'text-primary'}`}>{formData.categoryPhrase === "" ? "(Pharse Required) ," : formData.categoryPhrase}</span><span className={`${formData.categoryKeyword === "" ? 'text-red-500' : 'text-primary'}`}>{formData.categoryKeyword === "" ? "(Keyword Required)" : formData.categoryKeyword}</span></p>
 
                         <motion.button
                             disabled={disableSubmit}
-                            onClick={handleSubmit}
                             type="submit"
-                            className={`min-w-full text-white ${disableSubmit ? 'bg-red-300 border-red-500' : 'bg-primary border-primary hover:bg-transparent hover:text-primary cursor-pointer'} border-2 rounded-lg py-2 xs:py-3 text-sm xs:text-base  transition-colors font-semibold`}
+                            className={`min-w-full text-white ${disableSubmit ? 'bg-primary/50' : 'bg-primary border-primary hover:bg-transparent hover:text-primary cursor-pointer'} border-2 rounded-lg py-2 xs:py-3 text-sm xs:text-base  transition-colors font-semibold`}
                         >
-                            Add Category
+                            {isLoading ?
+                                (<LoadingDots className="h-5" />) : "Add Category"
+                            }
                         </motion.button>
                     </form>
 
