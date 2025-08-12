@@ -100,15 +100,16 @@ function AddCategory() {
                         <X className="w-6 h-6 xs:w-7 xs:h-7" style={{ color: '#273f4f' }} />
                     </button>
 
+                    <motion.h2
+                        className="text-xl xs:text-2xl font-bold text-secondary"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, duration: 0.4, type: "spring" }}
+                    >
+                        Add A Custom Category
+                    </motion.h2>
+
                     <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center gap-y-3 xs:gap-y-4 w-full">
-                        <motion.h2
-                            className="text-xl xs:text-2xl font-bold text-secondary"
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1, duration: 0.4, type: "spring" }}
-                        >
-                            Add A Custom Category
-                        </motion.h2>
 
                         <motion.div
                             className="flex flex-col gap-y-1 xs:gap-y-2 my-2"
