@@ -45,13 +45,17 @@ export async function GET(request: Request) {
       );
     }
 
-    const cityNames: string[] = geoData.map((cityInfo: any) => cityInfo.name);
+    const cityData = geoData.map((cityInfo: any) => ({
+      name: cityInfo.name,
+      lat: cityInfo.lat,
+      lng: cityInfo.lng,
+    }));
 
     return NextResponse.json<SuccessApiResponse>(
       {
         success: true,
         message: "Successfully fetchedGeoData.",
-        data: cityNames,
+        data: cityData,
       },
       { status: 200 }
     );

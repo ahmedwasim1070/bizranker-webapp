@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 // Context
 import { useAreaSelectorContext } from "@/app/providers/AreaSelectorProvider";
 import { FailedApiResponse, SuccessApiResponse } from "@/types";
+import { CityData } from "@/types";
 
 // Interfaces
 interface CityListerProps {
@@ -16,7 +17,7 @@ function CityLister({ customSelectCss }: CityListerProps) {
     // Context states
     const { selectedCountryCode, selectedCountryCapital, selectedCity, setSelectedCity } = useAreaSelectorContext();
     // States
-    const [cities, setCities] = useState<string[] | null>(null);
+    const [cities, setCities] = useState<CityData[] | null>(null);
     const [isFetching, setIsFetching] = useState<boolean>(false);
     const [fetchingError, setFetchingError] = useState<string | null>(null);
 
@@ -34,7 +35,7 @@ function CityLister({ customSelectCss }: CityListerProps) {
             if (!res.ok) {
                 const errData = (await res.json()) as FailedApiResponse;
                 setFetchingError("Error while loading Cities.");
-                throw new Error(`Error , ${errData}`);
+                throw new Error(`Error , ${errData.error}`);
             }
 
             const data = (await res.json()) as SuccessApiResponse;
@@ -48,8 +49,9 @@ function CityLister({ customSelectCss }: CityListerProps) {
     };
     // Handle selection
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selected = e.target.value;
-        setSelectedCity(selected);
+        const value = e.target.value;
+        const cityData = cities.find((city) => city.name === value);
+        setSelectedCity(cityData);
     };
 
 
@@ -64,7 +66,7 @@ function CityLister({ customSelectCss }: CityListerProps) {
 
     return (
         <select
-            value={selectedCity || selectedCountryCapital}
+            value={selectedCity?.name || selectedCountryCapital}
             className={`${customSelectCss ? customSelectCss : 'border border-secondary cursor-pointer text-white bg-secondary font-semibold rounded-xl p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all'}`}
             disabled={isFetching || !!fetchingError || !cities}
             onChange={handleSelect}
@@ -85,8 +87,8 @@ function CityLister({ customSelectCss }: CityListerProps) {
             )}
 
             {cities && cities?.length > 0 && cities.map((city, idx) => (
-                <option key={idx} value={city} className="font-poppin font-semibold ">
-                    {city}
+                <option key={idx} value={city.name} className="font-poppin font-semibold ">
+                    {city.name}
                 </option>
             ))}
 

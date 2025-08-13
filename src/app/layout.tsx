@@ -14,6 +14,7 @@ import { ToastContainer } from "react-toastify";
 export const metadata: Metadata = {
 	title: "RankedPlaces",
 	description: "A unique way to Rank Businesses.",
+
 };
 
 // 

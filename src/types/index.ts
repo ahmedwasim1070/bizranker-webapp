@@ -9,8 +9,16 @@ export type SessionData = {
 export type LocationData = {
   country: string;
   countryCode: string;
+  lat: string;
+  lng: string;
   capital: string;
   defaultCity?: string;
+};
+//
+export type CityData = {
+  name: string;
+  lat: string;
+  lng: string;
 };
 
 // API response

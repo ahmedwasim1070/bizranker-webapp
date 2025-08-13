@@ -2,6 +2,7 @@
 
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { CityData } from "@/types";
 // Context
 import { getGlobalProvider } from "./GolobalProvider";
 
@@ -10,8 +11,8 @@ interface AreaSelectorContextTypes {
     setSelectedCountryData: (selectedCountryData: selectedCountryDataPayload | null) => void;
     selectedCountryCode: string | undefined;
     selectedCountryCapital: string | undefined;
-    selectedCity: string | null;
-    setSelectedCity: (selectedCity: string | null) => void;
+    selectedCity: CityData | null;
+    setSelectedCity: (selectedCity: CityData | null) => void;
 }
 interface AreaSelectorProviderProps {
     children: ReactNode;
@@ -21,6 +22,8 @@ export type selectedCountryDataPayload = {
     country: string,
     countryCode: string,
     capital: string,
+    lat: string,
+    lng: string,
 }
 
 // Global context
@@ -32,16 +35,18 @@ function AreaSelectorProvider({ children }: AreaSelectorProviderProps) {
     const { userLocation, setUserLocation } = getGlobalProvider();
     // States
     const [selectedCountryData, setSelectedCountryData] = useState<selectedCountryDataPayload | null>(null);
-    const [selectedCity, setSelectedCity] = useState<string | null>(null);
+    const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
 
     // Effect 
     useEffect(() => {
         if (!selectedCountryData) return;
 
-        const { country, countryCode, capital } = selectedCountryData;
+        const { country, countryCode, capital, lat, lng } = selectedCountryData;
         if (
             userLocation?.country !== country ||
             userLocation?.countryCode !== countryCode ||
+            userLocation?.lat !== lat.toString() ||
+            userLocation?.lat !== lng.toString() ||
             userLocation?.capital !== capital
         ) {
             setUserLocation({ ...selectedCountryData });
@@ -50,9 +55,9 @@ function AreaSelectorProvider({ children }: AreaSelectorProviderProps) {
     useEffect(() => {
         if (!userLocation || !selectedCity) return;
 
-        if (selectedCity === userLocation?.defaultCity) return;
+        if (selectedCity.name === userLocation?.defaultCity) return;
 
-        setUserLocation({ ...userLocation, defaultCity: selectedCity })
+        setUserLocation({ ...userLocation, lat: selectedCity.lat, lng: selectedCity.lng, defaultCity: selectedCity.name })
     }, [selectedCity])
     useEffect(() => {
         if (!userLocation) return;
@@ -68,7 +73,7 @@ function AreaSelectorProvider({ children }: AreaSelectorProviderProps) {
         }
 
         if (defaultCity) {
-            setSelectedCity(defaultCity);
+            setSelectedCity({ name: defaultCity, lat: userLocation.lat, lng: userLocation.lng });
         }
     }, [userLocation]);
 

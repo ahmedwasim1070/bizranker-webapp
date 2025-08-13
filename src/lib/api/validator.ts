@@ -8,6 +8,7 @@ type ValidateCategoryFormData = (
   categoryKeyword: string
 ) => string | null;
 type ValidateCategory = (category: string) => Promise<string | null>;
+type ValidateCords = (lat: string, lng: string) => string | null;
 
 // AddCategory Form Validator
 export const validateCategoryFormData: ValidateCategoryFormData = (
@@ -52,4 +53,24 @@ export const validateCategory: ValidateCategory = async (category) => {
   } catch (err) {
     return null;
   }
+};
+
+// Validate Latitude and Longitude
+export const validateCords: ValidateCords = (lat, lng) => {
+  if (!lat || !lng) {
+    return "Latitude and Longitude are Required.";
+  }
+
+  const latitude = parseFloat(lat);
+  const longitude = parseFloat(lng);
+
+  if (isNaN(latitude) || isNaN(longitude)) {
+    return "Invalid Latitude or Longitude format.";
+  }
+
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+    return "Latitude must be between -90 and 90, Longitude between -180 and 180.";
+  }
+
+  return null;
 };

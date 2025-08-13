@@ -5,6 +5,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { FailedApiResponse, LocationData, SessionData, SuccessApiResponse } from "@/types";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
+import Script from "next/script";
 // Components
 import LocationSelector from "@/components/LocationSelector";
 import AddCategory from "@/components/AddCategory";
@@ -65,7 +66,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
                     const data = (await res.json()) as SuccessApiResponse;
                     const latNlngInfo = data.data;
 
-                    setUserLocation({ ...userLocation, defaultCity: latNlngInfo.city || latNlngInfo.town || latNlngInfo.village });
+                    setUserLocation({ ...userLocation, lat: latitude.toString(), lng: longitude.toString(), defaultCity: latNlngInfo.city || latNlngInfo.town || latNlngInfo.village });
                 } catch (err) {
                     console.error("Failed to fetchLiveLocation continuing with capital : ,", err);
                     setUserLocation({ ...userLocation, defaultCity: userLocation.capital })
@@ -122,7 +123,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
                 const errData = (await res.json()) as FailedApiResponse;
                 setRequestedProfilesError(errData.error);
                 setIsRequistingProfiles(false);
-                throw new Error(`Error , ${errData}`);
+                throw new Error(`Error , ${errData.error}`);
             }
 
             const data = await res.json();
@@ -183,7 +184,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
                 {isAddCategory && <AddCategory />}
 
                 {/*  */}
-                {true && <AddPlace />}
+                {isAddPlace && <AddPlace />}
             </SessionProvider>
 
 

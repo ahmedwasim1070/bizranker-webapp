@@ -1,37 +1,19 @@
 // Imports
 import { NextResponse } from "next/server";
 import { FailedApiResponse, SuccessApiResponse } from "@/types";
+import { validateCords } from "@/lib/api/validator";
 
 //
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+
   const lat = searchParams.get("lat");
   const lng = searchParams.get("lng");
 
-  if (!lat || !lng) {
+  const errorInLatnLng = validateCords(lat, lng);
+  if (errorInLatnLng) {
     return NextResponse.json<FailedApiResponse>(
-      { success: false, error: "Latitude and Longitude are Required." },
-      { status: 400 }
-    );
-  }
-
-  const latitude = parseFloat(lat);
-  const longitude = parseFloat(lng);
-
-  if (isNaN(latitude) || isNaN(longitude)) {
-    return NextResponse.json<FailedApiResponse>(
-      { success: false, error: "Invalid Latitude or Longitude format." },
-      { status: 400 }
-    );
-  }
-
-  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-    return NextResponse.json<FailedApiResponse>(
-      {
-        success: false,
-        error:
-          "Latitude must be between -90 and 90, Longitude between -180 and 180.",
-      },
+      { success: false, error: errorInLatnLng },
       { status: 400 }
     );
   }
@@ -46,7 +28,7 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(
-      `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${process.env.OPENCAGE_KEY}&no_annotations=1&limit=1&language=en`
+      `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lng}&key=${process.env.OPENCAGE_KEY}&no_annotations=1&limit=1&language=en`
     );
 
     if (!response.ok) {

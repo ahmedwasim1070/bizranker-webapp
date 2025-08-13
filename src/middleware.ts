@@ -1,13 +1,12 @@
-// // Imports
+// Imports
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { LocationDataContext } from "./types";
+import { LocationData } from "./types";
 
 //
 export async function middleware(request: Request) {
   const cookieStore = await cookies();
   const locationRawCookie = cookieStore.get("user_location")?.value;
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] ?? "UNKNOWN";
 
   if (locationRawCookie) return NextResponse.next();
 
@@ -28,12 +27,24 @@ export async function middleware(request: Request) {
       );
       return NextResponse.next();
     }
-    const data = await response.json();
 
-    const userIpLocationInfo: LocationDataContext = {
-      country: data.country_name || "unknown",
-      countryCode: data.country_code2 || "unknown",
-      capital: data.country_capital || "unknown",
+    const data = await response.json();
+    if (
+      !data.country_name ||
+      !data.country_code2 ||
+      !data.latitude ||
+      !data.longitude ||
+      !data.country_capital
+    ) {
+      return NextResponse.next();
+    }
+
+    const userIpLocationInfo: LocationData = {
+      country: data.country_name,
+      countryCode: data.country_code2,
+      lat: data.latitude,
+      lng: data.longitude,
+      capital: data.country_capital,
     };
 
     const res = NextResponse.next();
