@@ -5,7 +5,13 @@ import { rankingPhrases } from "../constants/rankingPhrases";
 // Types
 type ValidateCategoryFormData = (
   categoryPhrase: string,
-  categoryKeyword: string
+  categoryKeyword: string,
+  userId: string
+) => string | null;
+type ValidateAddPlaceFormData = (
+  placeDetails: any,
+  category: string,
+  userId: string
 ) => string | null;
 type ValidateCategory = (category: string) => Promise<string | null>;
 type ValidateCords = (lat: string, lng: string) => string | null;
@@ -13,14 +19,47 @@ type ValidateCords = (lat: string, lng: string) => string | null;
 // AddCategory Form Validator
 export const validateCategoryFormData: ValidateCategoryFormData = (
   categoryPhrase,
-  categoryKeyword
+  categoryKeyword,
+  userId
+) => {
+  if (!rankingPhrases.includes(categoryPhrase)) {
+    return "Invalid Form Data.";
+  }
+
+  if (
+    categoryKeyword.length < 3 &&
+    categoryKeyword.length > 20 &&
+    typeof categoryKeyword === "string"
+  ) {
+    return "Invalid Form Data.";
+  }
+
+  if (!userId || typeof userId !== "string") {
+    return "Invalid Form Data.";
+  }
+
+  return null;
+};
+
+// Validate AddPlace Form
+export const validateAddPlaceFormData: ValidateAddPlaceFormData = (
+  placeDetails,
+  category,
+  userId
 ) => {
   if (
-    !rankingPhrases.includes(categoryPhrase) ||
-    (categoryKeyword.length < 3 &&
-      categoryKeyword.length > 20 &&
-      typeof categoryKeyword === "string")
+    !placeDetails ||
+    !placeDetails.place_id ||
+    typeof placeDetails.place_id !== "string"
   ) {
+    return "Invalid Form Data.";
+  }
+
+  if (!category || typeof category !== "string") {
+    return "Invalid Form Data.";
+  }
+
+  if (!userId || typeof userId !== "string") {
     return "Invalid Form Data.";
   }
 

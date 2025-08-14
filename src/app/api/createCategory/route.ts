@@ -23,7 +23,8 @@ export async function POST(request: Request) {
 
     const errorInCategoryForm = validateCategoryFormData(
       categoryPhrase,
-      categoryKeyword
+      categoryKeyword,
+      userId
     );
     if (errorInCategoryForm) {
       return NextResponse.json<FailedApiResponse>(
