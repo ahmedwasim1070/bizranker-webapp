@@ -20,7 +20,7 @@ model User {
 
 model BusinessProfile {
   id               Int                             @id @default(autoincrement())
-  profileId        Int                             @unique
+  profileId        String                          @unique
   name             String                          @unique
   pfp              String                          @unique
   category         String
@@ -33,9 +33,6 @@ model BusinessProfile {
   reviewAmount     Int
   addedById        Int
   user             User                            @relation(fields: [addedById], references: [id])
-  votes            Votes[]
-  upVotes          Int                             @default(0)
-  downVotes        Int                             @default(0)
   customCategories BusinessProfileCustomCategory[]
 }
 
@@ -43,8 +40,8 @@ model CustomCategories {
   id               Int                             @id @default(autoincrement())
   name             String                          @unique
   createdAt        String
-  aurtherId        Int
-  user             User                            @relation(fields: [aurtherId], references: [id])
+  authorId         Int
+  author           User                            @relation(fields: [authorId], references: [id])
   businessProfiles BusinessProfileCustomCategory[]
 }
 
@@ -55,18 +52,24 @@ model BusinessProfileCustomCategory {
   businessProfile   BusinessProfile  @relation(fields: [businessProfileId], references: [id])
   customCategory    CustomCategories @relation(fields: [customCategoryId], references: [id])
 
+  upVotes   Int @default(0)
+  downVotes Int @default(0)
+
+  votes Votes[]
+
   @@unique([businessProfileId, customCategoryId])
 }
 
 model Votes {
-  id                Int             @id @default(autoincrement())
-  voteType          VoteType
-  votedById         Int
-  user              User            @relation(fields: [votedById], references: [id])
-  businessProfileId Int
-  BusinessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id])
+  id        Int      @id @default(autoincrement())
+  voteType  VoteType
+  votedById Int
+  user      User     @relation(fields: [votedById], references: [id])
 
-  @@unique([votedById, businessProfileId])
+  businessProfileCustomCategoryId Int
+  businessProfileCustomCategory   BusinessProfileCustomCategory @relation(fields: [businessProfileCustomCategoryId], references: [id])
+
+  @@unique([votedById, businessProfileCustomCategoryId])
 }
 
 enum VoteType {

@@ -1,10 +1,11 @@
 "use client";
 
 // Imports
-import Image from "next/image";
 import { getGlobalProvider } from "@/app/providers/GolobalProvider"
 import { Star, Phone, Globe, Info } from "lucide-react";
 import { motion } from 'framer-motion'
+import { CldImage } from "next-cloudinary";
+
 
 // Intercaes
 interface RenderProfilesProps {
@@ -53,8 +54,17 @@ const ErrorThrower = ({ requestedProfilesError }: ErrorThrowerProps) => (
 )
 // Profile Renderer
 const RenderProfiles = ({ profile }: RenderProfilesProps) => (
-    <div className=" bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-2">
-        <Image className="w-full h-48 rounded-t-lg font-semibold object-cover" src={''} width={100} height={48} alt={profile.name} />
+    <div className=" bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3">
+        <CldImage
+            className="w-full rounded-t-lg font-semibold object-cover"
+            src={profile.pfp}
+            width={100}
+            height={48}
+            alt={profile.name}
+            crop="fill"
+            gravity="auto"
+        />
+
 
         <h3 className="text-xl font-semibold">{profile.name}</h3>
 
@@ -66,17 +76,17 @@ const RenderProfiles = ({ profile }: RenderProfilesProps) => (
                 <span className="text-xs underline">{profile.phone}</span>
             </a>
 
-            <a className="flex flex-row items-center gap-x-2 cursor-pointer hover:text-primary transition-colors">
+            <a href={profile.website || ''} className="flex flex-row items-center gap-x-2 cursor-pointer hover:text-primary transition-colors">
                 <Globe className="w-5 h-5 text-blue-300 font-medium " />
                 <span className="text-xs underline">Website</span>
             </a>
         </div>
 
-        <div className="w-full flex items-center justify-center gap-x-2">
-            {profile.reviewRating && (
+        <div className="w-full flex flex-col items-center justify-center gap-x-2">
+            {profile.reviewValue && (
                 <span className="text-xs text-primary font-semibold flex items-center gap-x-2">
                     <Star className="w-4 h-4 fill-amber-300" />
-                    {profile.reviewRating.toFixed(1)}
+                    {profile.reviewValue.toFixed(1)}
                 </span>
             )}
             {profile.reviewAmount && (
@@ -105,15 +115,13 @@ function ProfilesShowroom() {
                         <SkeletonProfileLoader key={idx} />
                     ))}
                     {/* Error */}
-                    {(!isRequestingProfiles && !requestedProfiles || requestedProfiles?.length === 0) || requestedProfilesError &&
+                    {!requestedProfiles && requestedProfilesError ?
                         <ErrorThrower requestedProfilesError={requestedProfilesError || "Error while loading"} />
-                    }
-                    {/* Profiles */}
-                    {requestedProfiles?.map((profile, idx) => (
-                        <>
+                        :
+                        requestedProfiles?.map((profile, idx) => (
                             <RenderProfiles profile={profile} key={idx} />
-                        </>
-                    ))}
+                        ))
+                    }
                 </div>
             </section>
         </>

@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       data: {
         name: customCategory,
         createdAt: new Date().toISOString(),
-        aurtherId: user.id,
+        authorId: user.id,
       },
     });
 

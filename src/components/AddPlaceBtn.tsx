@@ -19,7 +19,7 @@ function AddPlaceBtn() {
                 <p className={`text-white sm:text-lg xxs:text-sm font-semibold  ${status === 'authenticated' && 'group-hover:text-primary'}`}>Add a Place</p>
             </button>
             {status === 'authenticated' &&
-                <p className="text-primary">In {selectedCategory} Category</p>
+                <p className="text-primary">In {selectedCategory}</p>
             }
         </section>
     )

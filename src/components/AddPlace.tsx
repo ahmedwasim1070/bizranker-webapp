@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
 import { FailedApiResponse, SuccessApiResponse } from "@/types";
 import LoadingDots from "./LoadingDots";
+import { toast } from "react-toastify";
 
 // 
 function AddPlace() {
@@ -119,13 +120,31 @@ function AddPlace() {
     const handleConfirmPlace = async () => {
         setIsConfirming(true);
         try {
-            console.log("Confirming place:", placeDetails);
-            // TODO: Add actual place confirmation logic here
-            setTimeout(() => {
-                closeModal();
-            }, 1000);
+            const res = await fetch(`/api/addPlace`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    placeDetails,
+                    category: selectedCategory,
+                    userId: session.user.userId,
+                }),
+            });
+            if (!res.ok) {
+                const errData = (await res.json()) as FailedApiResponse;
+                goBackToSearch();
+                toast.error(errData.error);
+                throw new Error(`Error while confirmingPlace ${errData.error}`)
+            }
+
+            const data = (await res.json()) as SuccessApiResponse;
+            toast.success(data.message);
+            closeModal();
         } catch (err) {
+            toast.error("Failed to add place.");
             console.error("Failed to confirm place:", err);
+            goBackToSearch();
         } finally {
             setIsConfirming(false);
         }

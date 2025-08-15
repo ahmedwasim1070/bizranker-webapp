@@ -5,7 +5,6 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { FailedApiResponse, LocationData, SessionData, SuccessApiResponse } from "@/types";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
-import Script from "next/script";
 // Components
 import LocationSelector from "@/components/LocationSelector";
 import AddCategory from "@/components/AddCategory";
@@ -116,6 +115,9 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
 
         setIsRequistingProfiles(true);
         const apiUrl = generateFetchProfilesApi();
+
+        setRequestedProfiles(null);
+        setRequestedProfilesError(null);
 
         try {
             const res = await fetch(apiUrl);
