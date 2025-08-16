@@ -29,6 +29,7 @@ model BusinessProfile {
   country          String
   phone            String
   website          String
+  mapsUrl          String                          @unique
   reviewValue      Float
   reviewAmount     Int
   addedById        Int

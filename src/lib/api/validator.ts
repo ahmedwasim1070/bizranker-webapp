@@ -55,7 +55,7 @@ export const validateAddPlaceFormData: ValidateAddPlaceFormData = (
     return "Invalid Form Data.";
   }
 
-  if (!category || typeof category !== "string") {
+  if (!category || typeof category !== "string" || category === "all") {
     return "Invalid Form Data.";
   }
 

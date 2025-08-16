@@ -2,7 +2,7 @@
 
 // Imports
 import { getGlobalProvider } from "@/app/providers/GolobalProvider"
-import { Star, Phone, Globe, Info } from "lucide-react";
+import { Star, Phone, Globe, Info, ArrowDown, ArrowUp, MapPin } from "lucide-react";
 import { motion } from 'framer-motion'
 import { CldImage } from "next-cloudinary";
 
@@ -54,7 +54,7 @@ const ErrorThrower = ({ requestedProfilesError }: ErrorThrowerProps) => (
 )
 // Profile Renderer
 const RenderProfiles = ({ profile }: RenderProfilesProps) => (
-    <div className=" bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3">
+    <div className="bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3">
         <CldImage
             className="w-full rounded-t-lg font-semibold object-cover"
             src={profile.pfp}
@@ -65,10 +65,12 @@ const RenderProfiles = ({ profile }: RenderProfilesProps) => (
             gravity="auto"
         />
 
-
         <h3 className="text-xl font-semibold">{profile.name}</h3>
 
         <h4 className="text-primary">{profile.category.name}</h4>
+
+
+
 
         <div className="w-full flex flex-row items-center justify-around">
             <a className="flex flex-row items-center gap-x-2 cursor-pointer hover:text-primary transition-colors">
@@ -79,6 +81,29 @@ const RenderProfiles = ({ profile }: RenderProfilesProps) => (
             <a href={profile.website || ''} className="flex flex-row items-center gap-x-2 cursor-pointer hover:text-primary transition-colors">
                 <Globe className="w-5 h-5 text-blue-300 font-medium " />
                 <span className="text-xs underline">Website</span>
+            </a>
+        </div>
+
+        <div className="rounded-full flex flex-row items-center bg-secondary/20 pr-2 my-2">
+            <div className="flex flex-row items-center">
+                <button className="p-2 rounded-full cursor-pointer hover:bg-secondary/40 group transition-colors">
+                    <ArrowUp className="w-4 h-4 stroke-2 text-primary" />
+                </button>
+                <p className="text-primary font-semibold text-sm">{profile.customCategories.upVotes || 0}</p>
+            </div>
+
+            <div className="flex flex-row items-center">
+                <button className="p-2 rounded-full cursor-pointer text-secondary hover:bg-primary/40 transition-colors">
+                    <ArrowDown className="w-4 h-4 stroke-2 text-secondary" />
+                </button>
+                <p className="text-secondary font-semibold text-sm">{profile.customCategories.downVotes || 0}</p>
+            </div>
+        </div>
+
+        <div className="flex flex-row gap-x-1 items-center cursor-pointer group">
+            <MapPin className="w-4 h-4  text-primary group-hover:text-secondary transition-colors" />
+            <a href={profile.mapsUrl} className="text-secondary underline group-hover:text-primary transition-colors text-sm">
+                Google Maps
             </a>
         </div>
 
@@ -96,7 +121,6 @@ const RenderProfiles = ({ profile }: RenderProfilesProps) => (
             )}
         </div>
 
-        <p className="text-sm text-primary">{profile.owner}</p>
     </div>
 );
 

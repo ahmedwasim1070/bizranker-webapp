@@ -19,7 +19,6 @@ function AddCategory() {
     const { setIsAddCategory } = getGlobalProvider();
     // States
     const [formData, setFormData] = useState({
-        userId: session.user.userId,
         categoryPhrase: "",
         categoryKeyword: "",
     })

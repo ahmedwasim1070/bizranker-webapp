@@ -2,7 +2,7 @@
 
 // Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { FailedApiResponse, LocationData, SessionData, SuccessApiResponse } from "@/types";
+import { FailedApiResponse, LocationData, SuccessApiResponse } from "@/types";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 // Components
@@ -177,11 +177,12 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             {/*  */}
             {isLocationPrompt && <LocationSelector />}
 
-            {/*  */}
-            {isGoogleAuth && <GoogleAuth />}
 
             {/*  */}
             <SessionProvider>
+                {/*  */}
+                {isGoogleAuth && <GoogleAuth />}
+
                 {/*  */}
                 {isAddCategory && <AddCategory />}
 

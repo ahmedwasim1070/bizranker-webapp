@@ -5,6 +5,18 @@ import { validateCords } from "@/lib/api/validator";
 
 //
 export async function GET(request: Request) {
+  const sessionUserIsGuest = request.headers.get("x-guest") === "true";
+
+  if (sessionUserIsGuest) {
+    return NextResponse.json<FailedApiResponse>(
+      {
+        success: false,
+        error: "Unauthorized.",
+      },
+      { status: 404 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
 
   const lat = searchParams.get("lat");

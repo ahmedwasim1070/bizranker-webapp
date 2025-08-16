@@ -1,10 +1,3 @@
-// Session
-export type SessionData = {
-  userId?: string;
-  name?: string;
-  email?: string;
-  isAuthenticated: boolean;
-};
 // Location Data Payload
 export type LocationData = {
   country: string;

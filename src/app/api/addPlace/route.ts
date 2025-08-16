@@ -64,6 +64,7 @@ function extractPlaceData(placeDetails: any, userId: number) {
       placeDetails.international_phone_number ||
       placeDetails.formatted_phone_number ||
       "",
+    mapsUrl: placeDetails.url,
     website: placeDetails.website || "",
     reviewValue: parseFloat(placeDetails.rating) || 0,
     reviewAmount: parseInt(placeDetails.user_ratings_total) || 0,
@@ -72,14 +73,26 @@ function extractPlaceData(placeDetails: any, userId: number) {
 }
 
 export async function POST(request: Request) {
+  const sessionUserId = request.headers.get("x-user-id");
+  const sessionUserIsGuest = request.headers.get("x-guest") === "true";
+
+  if (sessionUserIsGuest) {
+    return NextResponse.json<FailedApiResponse>(
+      {
+        success: false,
+        error: "Unauthorized.",
+      },
+      { status: 404 }
+    );
+  }
   try {
     const body: FormData = await request.json();
-    const { placeDetails, category, userId } = body;
+    const { placeDetails, category } = body;
 
     const errorInAddPlaceForm = validateAddPlaceFormData(
       placeDetails,
       category,
-      userId
+      sessionUserId
     );
     if (errorInAddPlaceForm) {
       return NextResponse.json<FailedApiResponse>(
@@ -93,7 +106,7 @@ export async function POST(request: Request) {
 
     // Verify user exists
     const user = await prisma.user.findUnique({
-      where: { userId },
+      where: { userId: sessionUserId },
     });
     if (!user) {
       return NextResponse.json<FailedApiResponse>(
@@ -105,21 +118,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // Handle category validation (skip if category is "all")
-    let categoryInDB = null;
-    if (category !== "all") {
-      categoryInDB = await prisma.customCategories.findUnique({
-        where: { name: category },
-      });
-      if (!categoryInDB) {
-        return NextResponse.json<FailedApiResponse>(
-          {
-            success: false,
-            error: "Category not found.",
-          },
-          { status: 404 }
-        );
-      }
+    const categoryInDB = await prisma.customCategories.findUnique({
+      where: { name: category },
+    });
+    if (!categoryInDB) {
+      return NextResponse.json<FailedApiResponse>(
+        {
+          success: false,
+          error: "Category not found.",
+        },
+        { status: 404 }
+      );
     }
 
     // Extract place data
@@ -149,10 +158,8 @@ export async function POST(request: Request) {
       },
     });
 
-    // Create category link only if category is not "all"
-    let businessCategoryLink = null;
-    if (category !== "all" && categoryInDB) {
-      businessCategoryLink = await prisma.businessProfileCustomCategory.upsert({
+    const businessCategoryLink =
+      await prisma.businessProfileCustomCategory.upsert({
         where: {
           businessProfileId_customCategoryId: {
             businessProfileId: businessProfile.id,
@@ -167,7 +174,6 @@ export async function POST(request: Request) {
           downVotes: 0,
         },
       });
-    }
 
     // Handle Cloudinary upload - check both new Google URL and existing pfp
     let cloudinaryUrl: string | null = null;
@@ -235,17 +241,11 @@ export async function POST(request: Request) {
       responseData.categoryLink = businessCategoryLink;
     }
 
-    // Determine success message based on category type
-    const message =
-      category === "all"
-        ? "Successfully added the place globally."
-        : `Successfully added the place to category: ${category}.`;
-
     // Return success response
     return NextResponse.json<SuccessApiResponse>(
       {
         success: true,
-        message,
+        message: `You added the ${placeData.name} in ${category}. `,
         data: responseData,
       },
       { status: 200 }

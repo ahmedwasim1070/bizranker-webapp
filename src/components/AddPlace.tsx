@@ -3,7 +3,7 @@
 // Imports
 import { getGlobalProvider } from "@/app/providers/GolobalProvider";
 import { useSession } from "next-auth/react";
-import { MapPin, Phone, Clock, Globe, Star, User, Calendar, UtensilsCrossed, Package, Truck, Car, ArrowLeft } from "lucide-react";
+import { MapPin, Phone, Clock, Globe, Star, UtensilsCrossed, Package, Truck, Car, ArrowLeft } from "lucide-react";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
@@ -128,7 +128,6 @@ function AddPlace() {
                 body: JSON.stringify({
                     placeDetails,
                     category: selectedCategory,
-                    userId: session.user.userId,
                 }),
             });
             if (!res.ok) {
@@ -186,7 +185,7 @@ function AddPlace() {
     return (
         <AnimatePresence>
             <motion.section
-                className="fixed inset-0 w-full h-full flex justify-center items-center bg-black/30 backdrop-blur-sm z-50 p-4"
+                className="overflow-y-hidden fixed inset-0 w-full h-full flex justify-center items-center bg-black/30 backdrop-blur-sm z-50 p-4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -334,7 +333,7 @@ function AddPlace() {
                                     Confirm to Add This Place
                                 </h2>
                                 <p className="text-sm text-primary font-semibold mt-1 text-center">
-                                    Review and confirm to add this Place to ${selectedCategory} Category.
+                                    Review and confirm to add this Place to {selectedCategory} Category.
                                 </p>
                             </div>
 

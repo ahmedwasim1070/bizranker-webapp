@@ -1,13 +1,15 @@
 // Imports
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import type { JWT } from "next-auth/jwt";
-import type { Session, User } from "next-auth";
 import { prisma } from "@/lib/prismaClient";
+import { v4 as uuid } from "uuid";
 
 //
 export const authOptions: NextAuthOptions = {
-  // O Auth provider details
+  session: {
+    strategy: "jwt",
+  },
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -15,7 +17,6 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  // After Call
   callbacks: {
     async signIn({ profile, account }) {
       try {
@@ -25,12 +26,9 @@ export const authOptions: NextAuthOptions = {
           return false;
         }
 
-        // Upsert user
         await prisma.user.upsert({
           where: { userId: providerUserId },
-          update: {
-            name: profile.name,
-          },
+          update: { name: profile.name },
           create: {
             userId: providerUserId,
             email: profile.email,
@@ -45,13 +43,13 @@ export const authOptions: NextAuthOptions = {
       }
     },
 
-    // JWT call
     async jwt({ token, account, profile }) {
       if (account && profile) {
         token.userId = account.providerAccountId;
+        token.guest = false;
       }
 
-      if (token.userId) {
+      if (token.userId && !token.guest) {
         const dbUser = await prisma.user.findUnique({
           where: { userId: token.userId },
         });
@@ -61,17 +59,26 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
+      if (!token.userId) {
+        token.userId = uuid();
+        token.guest = true;
+      }
+
       return token;
     },
 
-    // Session call
     async session({ session, token }) {
-      session.user.userId = token.userId;
-      session.user.name = token.name;
-      session.user.email = token.email;
+      session.user = {
+        id: token.userId,
+        name: token.name ?? null,
+        email: token.email ?? null,
+        guest: (token as any).guest ?? false,
+      };
       return session;
     },
   },
+
+  secret: process.env.NEXT_AUTH_KEY,
 };
 
 const handler = NextAuth(authOptions);

@@ -1,7 +1,7 @@
 "use client";
 
 // Imports
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { animate } from "framer-motion";

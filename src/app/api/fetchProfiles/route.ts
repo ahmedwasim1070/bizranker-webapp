@@ -4,7 +4,24 @@ import { prisma } from "@/lib/prismaClient";
 import { FailedApiResponse, SuccessApiResponse } from "@/types";
 import { validateCategory } from "@/lib/api/validator";
 
-//
+const includeRelations = {
+  user: true,
+  customCategories: {
+    include: {
+      customCategory: {
+        include: {
+          author: true,
+        },
+      },
+      votes: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  },
+};
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const requestType = searchParams.get("requestType");
@@ -62,7 +79,9 @@ export async function GET(request: Request) {
 const fetchWorldProfiles = async (category: string) => {
   try {
     if (category === "all") {
-      const profilesOfAll = await prisma.businessProfile.findMany();
+      const profilesOfAll = await prisma.businessProfile.findMany({
+        include: includeRelations,
+      });
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
           {
@@ -94,6 +113,7 @@ const fetchWorldProfiles = async (category: string) => {
             },
           },
         },
+        include: includeRelations,
       });
       if (!profilesOfCategory || profilesOfCategory.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -152,6 +172,7 @@ const fetchCountryProfiles = async (
     if (category === "all") {
       const profilesOfAll = await prisma.businessProfile.findMany({
         where: { country },
+        include: includeRelations,
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -185,6 +206,7 @@ const fetchCountryProfiles = async (
           },
           country,
         },
+        include: includeRelations,
       });
       if (!profilesOfCategory || profilesOfCategory.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -252,6 +274,7 @@ const fetchCityProfiles = async (params: URLSearchParams, category: string) => {
     if (category === "all") {
       const profilesOfAll = await prisma.businessProfile.findMany({
         where: { city, country },
+        include: includeRelations,
       });
       if (!profilesOfAll || profilesOfAll.length === 0) {
         return NextResponse.json<FailedApiResponse>(
@@ -286,6 +309,7 @@ const fetchCityProfiles = async (params: URLSearchParams, category: string) => {
           city,
           country,
         },
+        include: includeRelations,
       });
       if (!profilesOfCategory || profilesOfCategory.length === 0) {
         return NextResponse.json<FailedApiResponse>(

@@ -16,15 +16,27 @@ interface FormData {
 
 //
 export async function POST(request: Request) {
+  const sessionUserId = request.headers.get("x-user-id");
+  const sessionUserIsGuest = request.headers.get("x-guest") === "true";
+
+  if (sessionUserIsGuest) {
+    return NextResponse.json<FailedApiResponse>(
+      {
+        success: false,
+        error: "Unauthorized.",
+      },
+      { status: 404 }
+    );
+  }
   try {
     const body: FormData = await request.json();
 
-    const { categoryPhrase, categoryKeyword, userId } = body;
+    const { categoryPhrase, categoryKeyword } = body;
 
     const errorInCategoryForm = validateCategoryFormData(
       categoryPhrase,
       categoryKeyword,
-      userId
+      sessionUserId
     );
     if (errorInCategoryForm) {
       return NextResponse.json<FailedApiResponse>(
@@ -54,7 +66,7 @@ export async function POST(request: Request) {
     }
 
     const user = await prisma.user.findUnique({
-      where: { userId },
+      where: { userId: sessionUserId },
     });
     if (!user) {
       return NextResponse.json<FailedApiResponse>(
