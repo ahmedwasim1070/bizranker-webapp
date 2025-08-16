@@ -48,7 +48,7 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     const [isGoogleAuth, setIsGoogleAuth] = useState<boolean>(false);
     const [isAddPlace, setIsAddPlace] = useState<boolean>(false);
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
-    const [requestedCategories, setRequestedCategories] = useState<any[] | null>(null);
+    const [requestedCategories, setRequestedCategories] = useState<any[]>([]);
     const [isRequestingCategories, setIsRequestingCategories] = useState<boolean>(false);
     const [requestedCategoriesError, setRequestedCategoriesError] = useState<boolean>(false);
     const [requestedProfiles, setRequestedProfiles] = useState<any[] | null>(null);
@@ -148,7 +148,6 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         expires.setDate(expires.getDate() + 1);
 
         document.cookie = `user_location=${JSON.stringify(userLocation)}; expires=${expires.toUTCString()}; path=/`;
-        setIsLocationPrompt(false);
     }
     // Generates fetch profile url
     const generateFetchProfilesApi = () => {
@@ -172,8 +171,10 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     // Effects
     //  Fetch Live Location
     useEffect(() => {
-        fetchLiveLocation();
-    }, []);
+        if (userLocation && !userLocation.defaultCity) {
+            fetchLiveLocation();
+        }
+    }, [userLocation?.defaultCity]);
     // On User Location change
     useEffect(() => {
         if (userLocation) {
@@ -184,17 +185,26 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         } else {
             setIsLocationPrompt(true);
         }
-    }, [userLocation]);
+    }, [userLocation?.defaultCity, userLocation?.country]);
     // Fetch On Render
     useEffect(() => {
-        if (!requestedCategories) {
+        if (requestedCategories.length === 0) {
             fetchPlacesCategories();
         }
-    }, [requestedCategories])
+    }, [])
     // On category change
     useEffect(() => {
-        fetchProfiles();
+        if (userLocation?.defaultCity) {
+            setRequestedProfiles(null);
+            fetchProfiles();
+        }
     }, [selectedCategory])
+    // Update when user add a place
+    useEffect(() => {
+        if (newlyAddedPlace && userLocation?.defaultCity) {
+            fetchProfiles();
+        }
+    }, [newlyAddedPlace])
 
     return (
         <GlobalConext.Provider value={{

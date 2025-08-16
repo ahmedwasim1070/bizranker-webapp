@@ -43,10 +43,10 @@ function AreaSelectorProvider({ children }: AreaSelectorProviderProps) {
 
         const { country, countryCode, capital, lat, lng } = selectedCountryData;
         if (
-            userLocation?.country !== country ||
-            userLocation?.countryCode !== countryCode ||
-            userLocation?.lat !== lat.toString() ||
-            userLocation?.lat !== lng.toString() ||
+            userLocation?.country !== country &&
+            userLocation?.countryCode !== countryCode &&
+            userLocation?.lat !== lat.toString() &&
+            userLocation?.lat !== lng.toString() &&
             userLocation?.capital !== capital
         ) {
             setUserLocation({ ...selectedCountryData });

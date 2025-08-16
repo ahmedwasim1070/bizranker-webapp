@@ -55,7 +55,7 @@ const ErrorThrower = ({ requestedProfilesError }: ErrorThrowerProps) => (
 )
 // Profile Renderer
 const RenderProfiles = ({ profile, className }: RenderProfilesProps) => (
-    <div className={`${className ? className : 'border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3'} `}>
+    <div className={`${className ? className : 'border-2 border-primary '} text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3`}>
         <CldImage
             className="w-full rounded-t-lg font-semibold object-cover"
             src={profile.pfp}
@@ -140,7 +140,7 @@ function ProfilesShowroom() {
                         <RenderProfiles profile={newlyAddedPlace} className="border-2 border-green-500" />
                     )}
                     {/* Error */}
-                    {!requestedProfiles && requestedProfilesError ?
+                    {!requestedProfiles && !newlyAddedPlace && requestedProfilesError ?
                         <ErrorThrower requestedProfilesError={requestedProfilesError || "Error while loading"} />
                         :
                         requestedProfiles?.map((profile, idx) => (
