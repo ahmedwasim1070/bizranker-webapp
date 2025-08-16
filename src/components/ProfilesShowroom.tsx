@@ -10,6 +10,7 @@ import { CldImage } from "next-cloudinary";
 // Intercaes
 interface RenderProfilesProps {
     profile: any;
+    className?: string;
 }
 interface ErrorThrowerProps {
     requestedProfilesError: string;
@@ -53,8 +54,8 @@ const ErrorThrower = ({ requestedProfilesError }: ErrorThrowerProps) => (
     </div>
 )
 // Profile Renderer
-const RenderProfiles = ({ profile }: RenderProfilesProps) => (
-    <div className="bg-background border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3">
+const RenderProfiles = ({ profile, className }: RenderProfilesProps) => (
+    <div className={`${className ? className : 'border-2 border-primary text-secondary text-center rounded-lg flex flex-col items-center justify-center pb-4 gap-y-3'} `}>
         <CldImage
             className="w-full rounded-t-lg font-semibold object-cover"
             src={profile.pfp}
@@ -68,9 +69,6 @@ const RenderProfiles = ({ profile }: RenderProfilesProps) => (
         <h3 className="text-xl font-semibold">{profile.name}</h3>
 
         <h4 className="text-primary">{profile.category.name}</h4>
-
-
-
 
         <div className="w-full flex flex-row items-center justify-around">
             <a className="flex flex-row items-center gap-x-2 cursor-pointer hover:text-primary transition-colors">
@@ -127,7 +125,7 @@ const RenderProfiles = ({ profile }: RenderProfilesProps) => (
 // 
 function ProfilesShowroom() {
     // Context
-    const { requestedProfiles, requestedProfilesError, isRequestingProfiles } = getGlobalProvider();
+    const { requestedProfiles, requestedProfilesError, isRequestingProfiles, newlyAddedPlace } = getGlobalProvider();
 
 
     return (
@@ -138,6 +136,9 @@ function ProfilesShowroom() {
                     {isRequestingProfiles && [...Array(3)].map((_, idx) => (
                         <SkeletonProfileLoader key={idx} />
                     ))}
+                    {newlyAddedPlace && newlyAddedPlace && (
+                        <RenderProfiles profile={newlyAddedPlace} className="border-2 border-green-500" />
+                    )}
                     {/* Error */}
                     {!requestedProfiles && requestedProfilesError ?
                         <ErrorThrower requestedProfilesError={requestedProfilesError || "Error while loading"} />

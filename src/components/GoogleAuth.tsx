@@ -23,7 +23,7 @@ function GoogleAuth() {
         setIsLoading(true);
         try {
             const res = await signIn("google", { redirect: false, });
-            if (res.error) {
+            if (res?.error) {
                 toast.error("Error while Authentication.");
                 return;
             }

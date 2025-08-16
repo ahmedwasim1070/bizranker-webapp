@@ -20,9 +20,14 @@ interface GlobalContextType {
     setIsAddPlace: (isAddPlace: boolean) => void;
     selectedCategory: string;
     setSelectedCategory: (selectedCategory: string) => void;
+    requestedCategories: any[];
+    isRequestingCategories: boolean;
+    requestedCategoriesError: boolean;
     requestedProfiles: any[] | null;
     isRequestingProfiles: boolean;
     requestedProfilesError: string | null;
+    newlyAddedPlace: any | null;
+    setNewlyAddedPlace: (newlyAddedPlace: any | null) => void;
 }
 interface GlobalProviderProps {
     children: ReactNode;
@@ -43,9 +48,13 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
     const [isGoogleAuth, setIsGoogleAuth] = useState<boolean>(false);
     const [isAddPlace, setIsAddPlace] = useState<boolean>(false);
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
-    const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
-    const [isRequestingProfiles, setIsRequistingProfiles] = useState<boolean>(false);
+    const [requestedCategories, setRequestedCategories] = useState<any[] | null>(null);
+    const [isRequestingCategories, setIsRequestingCategories] = useState<boolean>(false);
+    const [requestedCategoriesError, setRequestedCategoriesError] = useState<boolean>(false);
     const [requestedProfiles, setRequestedProfiles] = useState<any[] | null>(null);
+    const [isRequestingProfiles, setIsRequistingProfiles] = useState<boolean>(false);
+    const [requestedProfilesError, setRequestedProfilesError] = useState<string | null>(null);
+    const [newlyAddedPlace, setNewlyAddedPlace] = useState<any | null>(null);
 
     // Get and process cordinates
     const fetchLiveLocation = () => {
@@ -81,6 +90,57 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             }
         );
     };
+    // Fetch Categories
+    const fetchPlacesCategories = async () => {
+        setIsRequestingCategories(true);
+        setRequestedCategoriesError(false);
+        try {
+            const res = await fetch('/api/fetchCategories');
+            if (!res.ok) {
+                throw new Error("Failed to fetch business categories.");
+            }
+
+            const data = await res.json();
+            const storedBusinessCategory = data.data;
+            setRequestedCategories(storedBusinessCategory);
+        } catch (error) {
+            console.error('Error fetching business types:', error);
+            setRequestedCategoriesError(true);
+        } finally {
+            setIsRequestingCategories(false);
+        }
+    }
+    // Fetches Profiles
+    const fetchProfiles = async () => {
+        if (!userLocation?.defaultCity)
+            return;
+
+        setIsRequistingProfiles(true);
+        const apiUrl = generateFetchProfilesApi();
+
+        setRequestedProfiles(null);
+
+        setRequestedProfilesError(null);
+
+        try {
+            const res = await fetch(apiUrl);
+            if (!res.ok) {
+                const errData = (await res.json()) as FailedApiResponse;
+                setRequestedProfilesError(errData.error || "Unknown server error");
+                throw new Error(errData.error || "Unknown server error");
+            }
+
+            const data = await res.json();
+            const buisnessProfiles = data.data;
+            setRequestedProfiles(buisnessProfiles);
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Failed to Load Profiles.";
+            setRequestedProfilesError(message);
+            console.error("Failed to fetchProfiles : ", err);
+        } finally {
+            setIsRequistingProfiles(false);
+        }
+    }
     // Updates location cookies
     const updateCookie = () => {
         setIsLocationPrompt(false);
@@ -108,37 +168,6 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
         }
         return `/api/fetchProfiles/?requestType=${type}&category=${selectedCategory}&country=${userLocation?.country}&city=${userLocation?.defaultCity}`;
     }
-    // Fetches Profiles
-    const fetchProfiles = async () => {
-        if (!userLocation?.defaultCity)
-            return;
-
-        setIsRequistingProfiles(true);
-        const apiUrl = generateFetchProfilesApi();
-
-        setRequestedProfiles(null);
-        setRequestedProfilesError(null);
-
-        try {
-            const res = await fetch(apiUrl);
-            if (!res.ok) {
-                const errData = (await res.json()) as FailedApiResponse;
-                setRequestedProfilesError(errData.error);
-                setIsRequistingProfiles(false);
-                throw new Error(`Error , ${errData.error}`);
-            }
-
-            const data = await res.json();
-            const buisnessProfiles = data.data;
-            setRequestedProfiles(buisnessProfiles);
-        } catch (err) {
-            setRequestedProfilesError("Failed to Load Profiles.");
-            setIsRequistingProfiles(false);
-            console.error("Failed to fetchProfiles : ", err);
-        } finally {
-            setIsRequistingProfiles(false);
-        }
-    }
 
     // Effects
     //  Fetch Live Location
@@ -156,6 +185,12 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             setIsLocationPrompt(true);
         }
     }, [userLocation]);
+    // Fetch On Render
+    useEffect(() => {
+        if (!requestedCategories) {
+            fetchPlacesCategories();
+        }
+    }, [requestedCategories])
     // On category change
     useEffect(() => {
         fetchProfiles();
@@ -170,9 +205,14 @@ export function GlobalProvider({ children, locationData }: GlobalProviderProps) 
             setIsAddPlace,
             selectedCategory,
             setSelectedCategory,
+            requestedCategories,
+            isRequestingCategories,
+            requestedCategoriesError,
             requestedProfiles,
             isRequestingProfiles,
-            requestedProfilesError
+            requestedProfilesError,
+            newlyAddedPlace,
+            setNewlyAddedPlace
         }}>
             {/*  */}
             {isLocationPrompt && <LocationSelector />}

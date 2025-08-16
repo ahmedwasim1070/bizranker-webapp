@@ -86,7 +86,7 @@ const fetchWorldProfiles = async (category: string) => {
         return NextResponse.json<FailedApiResponse>(
           {
             success: false,
-            error: "No Profiles found.",
+            error: "No Profiles Found Start Adding.",
           },
           { status: 404 }
         );
@@ -119,7 +119,7 @@ const fetchWorldProfiles = async (category: string) => {
         return NextResponse.json<FailedApiResponse>(
           {
             success: false,
-            error: "No Profiles found.",
+            error: "No Profiles Found Start Adding.",
           },
           { status: 404 }
         );
@@ -178,7 +178,7 @@ const fetchCountryProfiles = async (
         return NextResponse.json<FailedApiResponse>(
           {
             success: false,
-            error: "No Profiles found.",
+            error: "No Profiles Found Start Adding.",
           },
           { status: 404 }
         );
@@ -212,7 +212,7 @@ const fetchCountryProfiles = async (
         return NextResponse.json<FailedApiResponse>(
           {
             success: false,
-            error: "No Profiles found.",
+            error: "No Profiles Found Start Adding.",
           },
           { status: 404 }
         );
@@ -280,7 +280,7 @@ const fetchCityProfiles = async (params: URLSearchParams, category: string) => {
         return NextResponse.json<FailedApiResponse>(
           {
             success: false,
-            error: "No Profiles found.",
+            error: "No Profiles Found Start Adding.",
           },
           { status: 404 }
         );
@@ -315,7 +315,7 @@ const fetchCityProfiles = async (params: URLSearchParams, category: string) => {
         return NextResponse.json<FailedApiResponse>(
           {
             success: false,
-            error: "No Profiles found.",
+            error: "No Profiles Found Start Adding.",
           },
           { status: 404 }
         );

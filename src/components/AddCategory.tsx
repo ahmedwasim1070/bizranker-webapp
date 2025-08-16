@@ -108,15 +108,15 @@ function AddCategory() {
                         Add A Custom Category
                     </motion.h2>
 
-                    <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center gap-y-3 xs:gap-y-4 w-full">
+                    <form onSubmit={handleSubmit} className="w-full flex flex-col justify-center items-center gap-y-3 xs:gap-y-4">
 
                         <motion.div
-                            className="flex flex-col gap-y-1 xs:gap-y-2 my-2"
+                            className="w-full flex flex-col gap-y-1 xs:gap-y-2 my-2"
                             initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2, duration: 0.4, type: "spring" }}
                         >
-                            <div className="w-full flex flex-row items-center gap-x-2 bg-background p-2 rounded-lg transition-all">
+                            <div className="min-w-full flex flex-row items-center gap-x-2 bg-background p-2 rounded-lg transition-all">
                                 {/*  */}
                                 <div className="w-1/2 flex flex-col">
                                     <motion.label

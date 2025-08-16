@@ -28,37 +28,11 @@ const CategorySkeleton = () => {
 // 
 function BusinessCateogoriesCorosel() {
     // Context
-    const { selectedCategory, setSelectedCategory } = getGlobalProvider();
+    const { selectedCategory, setSelectedCategory, requestedCategories, isRequestingCategories, requestedCategoriesError } = getGlobalProvider();
     // Refs
     const sliderRef = useRef(null);
     // States
-    const [isFeching, setIsFetching] = useState<boolean>(false);
-    const [businessCategories, setBusinessCategories] = useState<any[] | null>(null);
-    const [isError, setIsError] = useState<boolean>(false);
 
-    // fetchAllBuinessTypes
-    const fetchBusinessType = async () => {
-        setIsFetching(true);
-        setIsError(false);
-        try {
-            const res = await fetch('/api/fetchCategories');
-            if (!res.ok) {
-                setIsFetching(false);
-                setIsError(true);
-                throw new Error("Failed to fetch business categories.");
-            }
-
-            const data = await res.json();
-            const storedBusinessCategory = data.data;
-            setBusinessCategories(storedBusinessCategory);
-        } catch (error) {
-            console.error('Error fetching business types:', error);
-            setIsError(true);
-            setIsFetching(false);
-        } finally {
-            setIsFetching(false);
-        }
-    }
     // handleScroll
     const handleScroll = (direction: string) => {
         const slider = sliderRef.current as HTMLElement | null;
@@ -115,31 +89,23 @@ function BusinessCateogoriesCorosel() {
         }
     }
 
-
-    // Effects
-    useEffect(() => {
-        if (!businessCategories) {
-            fetchBusinessType();
-        }
-    }, [])
-
     // 
     return (
         <>
-            <section hidden={isError} className="min-w-screen h-10 flex flex-row items-center py-10 px-2 xxs:px-4 bg-white">
+            <section hidden={requestedCategoriesError} className="min-w-screen bg-white h-10 flex flex-row items-center justify-center py-10 overflow-hidden">
                 <button
                     onClick={() => handleScroll("prev")}
-                    className="bg-primary rounded-full p-1 xxs:p-2 border border-primary transition-colors hover:bg-transparent cursor-pointer"
+                    className="bg-primary rounded-full p-1 xxs:p-2 border border-primary transition-colors mx-4 hover:bg-transparent cursor-pointer"
                 >
                     <ChevronLeft className="w-6 h-6 xxs:w-8 xxs:h-8 text-secondary" />
                 </button>
 
                 <div
                     ref={sliderRef}
-                    className="w-full flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
+                    className="w-full xs:max-w-[85%] xxs:max-w-[70%] flex flex-row gap-x-1 xxs:gap-x-2 overflow-x-scroll mx-1 xxs:mx-2 rounded-lg scrollbar-hidden"
                     style={{ minHeight: '48px', minWidth: '120px', position: 'relative' }}
                 >
-                    {isFeching ? (
+                    {isRequestingCategories ? (
                         <CategorySkeleton />
                     ) : (
                         <>
@@ -152,7 +118,7 @@ function BusinessCateogoriesCorosel() {
                             >
                                 All
                             </button>
-                            {businessCategories && businessCategories.map((category, idx) => (
+                            {requestedCategories && requestedCategories.map((category, idx) => (
                                 <button
                                     key={idx}
                                     value={category.name}

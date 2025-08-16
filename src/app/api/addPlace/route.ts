@@ -134,6 +134,27 @@ export async function POST(request: Request) {
     // Extract place data
     const placeData = extractPlaceData(placeDetails, user.id);
 
+    // Check if profile already exists in this category
+    const existingCategoryLink =
+      await prisma.businessProfileCustomCategory.findFirst({
+        where: {
+          businessProfile: {
+            profileId: placeData.profileId,
+          },
+          customCategoryId: categoryInDB.id,
+        },
+      });
+
+    if (existingCategoryLink) {
+      return NextResponse.json<FailedApiResponse>(
+        {
+          success: false,
+          error: "Business profile already exists in this category.",
+        },
+        { status: 400 }
+      );
+    }
+
     // Generate Google photo URL if photo exists
     const googlePhotoUrl = placeDetails.photos?.length
       ? generateGooglePhotoUrl(placeDetails.photos[0].photo_reference)
@@ -159,15 +180,8 @@ export async function POST(request: Request) {
     });
 
     const businessCategoryLink =
-      await prisma.businessProfileCustomCategory.upsert({
-        where: {
-          businessProfileId_customCategoryId: {
-            businessProfileId: businessProfile.id,
-            customCategoryId: categoryInDB.id,
-          },
-        },
-        update: {}, // No updates needed if relationship exists
-        create: {
+      await prisma.businessProfileCustomCategory.create({
+        data: {
           businessProfileId: businessProfile.id,
           customCategoryId: categoryInDB.id,
           upVotes: 0,
@@ -186,7 +200,6 @@ export async function POST(request: Request) {
     if ((hasGooglePhotoUrl || hasExistingGoogleUrl) && !hasCloudinaryUrl) {
       try {
         const publicId = `business_${businessProfile.profileId}_${Date.now()}`;
-        // Prefer new Google URL over existing one
         const imageUrlToUpload = googlePhotoUrl || currentPfp;
 
         console.log(
@@ -201,7 +214,6 @@ export async function POST(request: Request) {
         );
 
         if (cloudinaryUrl) {
-          // Update database with Cloudinary URL
           await prisma.businessProfile.update({
             where: { id: businessProfile.id },
             data: { pfp: cloudinaryUrl },
@@ -219,34 +231,24 @@ export async function POST(request: Request) {
       console.log("Business already has Cloudinary URL, skipping upload");
     }
 
-    // Prepare response data
-    const finalPfpUrl = cloudinaryUrl || businessProfile.pfp;
-    const responseData: any = {
-      businessProfile: {
-        ...businessProfile,
-        pfp: finalPfpUrl,
-      },
-      imageUpload: {
-        googlePhotoUrl,
-        cloudinaryUrl,
-        existingUrl: businessProfile.pfp,
-        finalUrl: finalPfpUrl,
-        uploadSuccess: !!cloudinaryUrl,
-        wasGoogleUrlMigrated: !googlePhotoUrl && !!cloudinaryUrl,
+    const includeRelations = {
+      customCategories: {
+        include: {
+          customCategory: true,
+        },
       },
     };
 
-    // Add category link to response only if it exists
-    if (businessCategoryLink) {
-      responseData.categoryLink = businessCategoryLink;
-    }
+    const finalProfile = await prisma.businessProfile.findUnique({
+      where: { id: businessProfile.id },
+      include: includeRelations,
+    });
 
-    // Return success response
     return NextResponse.json<SuccessApiResponse>(
       {
         success: true,
         message: `You added the ${placeData.name} in ${category}. `,
-        data: responseData,
+        data: finalProfile,
       },
       { status: 200 }
     );

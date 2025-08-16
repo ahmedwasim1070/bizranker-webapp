@@ -16,7 +16,7 @@ function AddPlace() {
     // Session Context
     const { data: session, status } = useSession();
     // Context
-    const { setIsAddPlace, userLocation, selectedCategory } = getGlobalProvider();
+    const { setIsAddPlace, userLocation, selectedCategory, setNewlyAddedPlace } = getGlobalProvider();
     // Refs
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
     // States
@@ -38,7 +38,7 @@ function AddPlace() {
                 const res = await fetch(`/api/fetchPlacesSuggestion/?lat=${userLocation.lat}&lng=${userLocation.lng}&userKeyStrokes=${value}`)
                 if (!res.ok) {
                     const errData = (await res.json()) as FailedApiResponse;
-                    throw new Error(`Error , ${errData.error}`);
+                    throw new Error(errData.error || "Unknown Server Error ");
                 }
 
                 const data = (await res.json()) as SuccessApiResponse;
@@ -139,6 +139,7 @@ function AddPlace() {
 
             const data = (await res.json()) as SuccessApiResponse;
             toast.success(data.message);
+            setNewlyAddedPlace(data.data);
             closeModal();
         } catch (err) {
             toast.error("Failed to add place.");

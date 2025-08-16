@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
 	return (
 		<html lang="en">
-			<body>
+			<body className="overflow-x-hidden">
 				<ToastContainer position="top-right" autoClose={3000} />
 				<GlobalProvider locationData={locationData} >
 					<Header />
