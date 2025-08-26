@@ -26,13 +26,9 @@ function CountrySelector() {
     // Nav Contents
     const navigationItems = [
         {
-            href: '/top/country/places',
-            label: 'Top Country Places',
+            href: '/top/world/places',
+            label: 'Top World Places',
         },
-        {
-            href: '/top/city/places',
-            label: 'Top City Places',
-        }
     ]
     // Fetch country from (/public/data/countries.json)
     const fetchCountries = async () => {
@@ -53,10 +49,10 @@ function CountrySelector() {
             const msg =
                 err instanceof Error ? err.message : "Unexpected error.";
             // 
-            setIsLoading(true);
-            // 
             setErrMsg(msg);
             console.error("Error in fetchCountries in CountrySelector.", "Message : ", msg, "Error : ", err);
+        } finally {
+            setIsLoading(false);
         }
     }
     // Handle selection
@@ -71,11 +67,15 @@ function CountrySelector() {
         if (!countries) {
             fetchCountries();
         }
-    }, [countries])
+    }, [])
     // Set the country data to locationCookie
     useEffect(() => {
         if (selectedCountry) {
-            setLocationCookieData(selectedCountry);
+            const locationPayload = {
+                ...selectedCountry,
+                defaultCity: selectedCountry.capital,
+            }
+            setLocationCookieData(locationPayload);
         }
     }, [selectedCountry])
 
@@ -88,17 +88,17 @@ function CountrySelector() {
 
                 <form className="flex flex-row space-x-4 items-center justify-center">
                     <select
-                        className="border border-secondary cursor-pointer text-white bg-secondary font-semibold rounded-xl p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="border border-secondary cursor-pointer text-secondary bg-background font-semibold rounded-xl p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                         disabled={isLoading || !!errMsg || !countries}
                         onChange={handleSelect}
                     >
-                        <option hidden>
-                            Select Country
-                        </option>
-
                         {isLoading && (
                             <option className="text-white bg-secondary" hidden>Loading countries...</option>
                         )}
+
+                        <option hidden>
+                            Select Country
+                        </option>
 
                         {errMsg && (
                             <option className="text-red-500 bg-secondary" hidden>{errMsg}</option>

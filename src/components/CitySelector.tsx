@@ -1,3 +1,5 @@
+"use client";
+
 // Imports
 import { useEffect, useState } from "react";
 // Types
@@ -27,7 +29,7 @@ function CitySelector() {
         // 
         setErrMsg(null);
         try {
-            const res = await fetch('/data/countries.json');
+            const res = await fetch(`/api/fetchCities/?country-code=${locationCookieData?.countryCode}`);
             if (!res.ok) {
                 const errData = (await res.json()) as ApiResponse<never>;
                 throw new Error(errData.message);
@@ -42,16 +44,17 @@ function CitySelector() {
             const msg =
                 err instanceof Error ? err.message : "Unexpected error.";
             // 
-            setIsLoading(true);
-            // 
             setErrMsg(msg);
             console.error("Error in fetchCountries in CountrySelector.", "Message : ", msg, "Error : ", err);
+        } finally {
+            setIsLoading(false);
         }
     }
     // Handle selection
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selected = JSON.parse(e.target.value);
-        setSelectedCity(selected);
+        const selected = e.target.value;
+        const selectedCityData = cities?.find((city) => city.name === selected) || null;
+        setSelectedCity(selectedCityData);
     };
 
     // Effects
@@ -60,7 +63,7 @@ function CitySelector() {
         if (!cities) {
             fetchCities();
         }
-    }, [cities]);
+    }, []);
     // Update locationCookieData
     useEffect(() => {
         if (selectedCity && locationCookieData) {
@@ -70,21 +73,21 @@ function CitySelector() {
 
     return (
         <select
-            value={selectedCity?.name || locationCookieData?.capital}
-            className={'border border-secondary cursor-pointer text-white bg-secondary font-semibold rounded-xl p-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all'}
+            value={selectedCity?.name || locationCookieData?.defaultCity}
+            className={'max-w-44 cursor-pointer bg-background text-secondary rounded-xl px-2 font-semibold focus:outline-none focus:ring-2 focus:ring-secondary transition-all'}
             disabled={isLoading || !!errMsg || !cities}
             onChange={handleSelect}
         >
+
+            {isLoading && (
+                <option className="text-white bg-secondary" hidden>Loading cities...</option>
+            )}
 
             {!selectedCity &&
                 <option hidden>
                     Select City
                 </option>
             }
-
-            {isLoading && (
-                <option className="text-white bg-secondary" hidden>Loading cities...</option>
-            )}
 
             {errMsg && (
                 <option className="text-red-500 bg-secondary" hidden>{errMsg}</option>

@@ -2,10 +2,10 @@
 
 // Imports
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
-import { cookies } from "next/headers";
+// Component
+import CountrySelector from "@/components/CountrySelector";
 // Types
 import { LocationCookieData } from "@/types";
-import CountrySelector from "@/components/CountrySelector";
 
 // Interfaces
 interface LocationProvider {
@@ -13,39 +13,21 @@ interface LocationProvider {
     setLocationCookieData: React.Dispatch<React.SetStateAction<LocationCookieData | null>>
 }
 interface LocationProviderProps {
-    children?: ReactNode;
+    children: ReactNode;
+    initialLocation: LocationCookieData | null;
 }
 
 // Context 
 const LocationContext = createContext<LocationProvider | undefined>(undefined);
 
 // 
-export const LocationProvider = ({ children }: LocationProviderProps) => {
+export const LocationProvider = ({ children, initialLocation }: LocationProviderProps) => {
     // States
     // Location cookie data in var
-    const [locationCookieData, setLocationCookieData] = useState<LocationCookieData | null>(null);
+    const [locationCookieData, setLocationCookieData] = useState<LocationCookieData | null>(initialLocation);
     // Location prompt for country selection
     const [isCountrySelector, setIsCountrySelector] = useState<boolean>(false);
 
-    // get cookie data function
-    const getLocationCookie = (): LocationCookieData | null => {
-        // 
-        const cookieStore = cookies();
-        const locationRawCookie = cookieStore.get("user_location")?.value;
-
-        // 
-        let locationCookie = null;
-        try {
-            locationCookie = locationRawCookie ? JSON.parse(locationRawCookie) as LocationCookieData : null;
-        } catch (error) {
-            console.error("Error while Parsing Cookie. ,", error);
-            locationCookie = null;
-            setIsCountrySelector(true);
-        }
-
-        return locationCookie;
-    };
-    // Updates cookie funciton 
     const updateCookie = () => {
         const expires = new Date();
         expires.setDate(expires.getDate() + 1);
@@ -54,17 +36,13 @@ export const LocationProvider = ({ children }: LocationProviderProps) => {
     }
 
     // Effect 
-    // Sets Location Cookie to locationCookieData var
-    useEffect(() => {
-        if (!locationCookieData) {
-            const locationCookie = getLocationCookie();
-            setLocationCookieData(locationCookie);
-        }
-    }, [])
     // Updates cookie if the locationData gets changed
     useEffect(() => {
         if (locationCookieData) {
+            setIsCountrySelector(false);
             updateCookie();
+        } else {
+            setIsCountrySelector(true);
         }
     }, [locationCookieData])
 
@@ -77,7 +55,7 @@ export const LocationProvider = ({ children }: LocationProviderProps) => {
             {isCountrySelector && <CountrySelector />}
 
             {/*  */}
-            {children}
+            {locationCookieData && children}
 
         </LocationContext.Provider>
     )

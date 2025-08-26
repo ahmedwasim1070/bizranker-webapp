@@ -2,12 +2,13 @@
 
 // Imports
 import React, { createContext, ReactNode, useContext, useState } from "react"
+import { usePathname } from "next/navigation";
 // Components
 import Loader from "@/components/Loader";
-import { LocationProvider } from "./LocationProvider";
 
 // Interfaces
 interface GloabalProvider {
+    pathname: string;
     isLoading: boolean;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -20,12 +21,15 @@ const GlobalContext = createContext<GloabalProvider | undefined>(undefined);
 
 // 
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
+    // Paht
+    const pathname = usePathname();
     // States
     // Loader state to triger main loader
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     return (
         <GlobalContext.Provider value={{
+            pathname,
             isLoading,
             setIsLoading,
         }}>
@@ -33,10 +37,6 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
             {isLoading &&
                 <Loader fullscreen={true} />
             }
-
-            {/* Country Location Prompt */}
-            <LocationProvider />
-
             {/* Children Components */}
             {children}
         </GlobalContext.Provider>
