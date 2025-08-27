@@ -19,14 +19,14 @@ function Header() {
     // Nav Contents
     const navigationItems = [
         {
-            href: '/top/country/profiles',
+            href: '/top/country/place',
             label: 'Top Country Places',
-            isActive: pathname === '/top/country/profiles',
+            isActive: pathname === '/top/country/places',
         },
         {
-            href: '/top/city/profiles',
+            href: '/top/city/places',
             label: 'Top City Places',
-            isActive: pathname === '/top/city/profiles',
+            isActive: pathname === '/top/city/places',
         }
     ]
 

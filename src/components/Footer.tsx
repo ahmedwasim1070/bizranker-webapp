@@ -3,11 +3,14 @@
 // Imports
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+// Providers
+import { getGlobalProvider } from "@/providers/GlobalProvider";
 
 // 
 function Footer() {
-    const pathname = usePathname();
+    // Provider
+    const { pathname } = getGlobalProvider();
+    // Nav Item
     const primaryNavigationItems = [
         {
             href: '/about-us',

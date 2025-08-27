@@ -10,7 +10,7 @@ import { getLocationProvider } from "@/providers/LocationProvider";
 
 // 
 function CountrySelector() {
-    // Context
+    // Providers
     // Location
     const { locationCookieData, setLocationCookieData } = getLocationProvider();
     // States
