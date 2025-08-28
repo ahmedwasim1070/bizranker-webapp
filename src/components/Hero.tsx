@@ -13,9 +13,9 @@ function Hero() {
     const { locationCookieData } = getLocationProvider();
 
     return (
-        <main role="main" className="min-w-screen py-10 flex flex-col items-center bg-gradient-to-b from-background to-white gap-y-3">
+        <main role="main" className="min-w-screen py-14 flex flex-col items-center bg-gradient-to-b from-background to-white gap-y-4">
             {/*  */}
-            <article className="text-center">
+            <article className="text-center px-2">
                 <header>
                     {/*  */}
                     <h1>
@@ -29,13 +29,16 @@ function Hero() {
             </article>
 
             {/*  */}
-            <section className="min-w-2/6 flex flex-col justify-center items-center ">
-                <div className="min-w-full flex flex-row items-center gap-x-1">
-                    <input type="search" className="min-w-full border-2 border-gray-400 rounded-full px-3 py-2 text-secondary placeholder:text-gray-400 outline-none focus:border-primary " placeholder="Search tag or place." />
-                    <button className="bg-primary p-2 rounded-full border-2 border-primary hover:bg-transparent cursor-pointer transition-colors">
+            <section className="min-w-1/2 flex flex-col justify-center items-center text-center">
+
+                {/*  */}
+                <div className="min-w-full flex flex-row justify-center items-center gap-x-1 px-2">
+                    <input type="search" className="w-full md:min-w-100 xxs:min-w-20 shrink border-2 border-gray-400 rounded-full px-3 py-2 text-secondary placeholder:text-gray-400 outline-none focus:border-primary " placeholder="Search tag or place." />
+                    <button className="bg-primary outline-none p-2 rounded-full border-2 border-primary hover:bg-transparent cursor-pointer transition-colors">
                         <Search className="w-6 h-6 text-secondary" />
                     </button>
                 </div>
+
                 {/*  */}
                 <p className="text-secondary my-2 md:text-md xxs:text-sm">Searching in <strong className="text-primary">{locationCookieData?.defaultCity}</strong> , <strong>{locationCookieData?.countryCode}</strong></p>
             </section>

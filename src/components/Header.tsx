@@ -34,15 +34,16 @@ function Header() {
     return (
         <header id="header" role="banner" className={`min-w-screen ${isExpanded ? 'xxs:h-50' : 'xxs:h-22'} bg-background py-6 flex flex-row md:gap-y-0 xxs:gap-y-4 items-center justify-between md:flex-nowrap xxs:flex-wrap xs:px-6 xxs:px-2 overflow-hidden transition-all`}>
             {/* Left */}
-            <div>
+            <div className="flex items-center justify-between md:min-w-auto xxs:min-w-full">
                 <Link href={'/'} className="cursor-pointer group">
                     <Image className="group-hover:opacity-80 transition-opacity" src={'./main-logo.svg'} width={150} height={50} alt="RankedPlaces - Business Directory and Ranking Platform Logo" />
                 </Link>
+
+                <button onClick={() => setIsExpaneded(!isExpanded)} className="md:hidden xxs:block p-2 bg-primary rounded-lg shadow-sm border border-secondary/80 cursor-pointer hover:bg-transparent transition-colors">
+                    <AlignJustify className="w-6 h-6 text-secondary" />
+                </button>
             </div>
 
-            <button onClick={() => setIsExpaneded(!isExpanded)} className="md:hidden xxs:block p-2 bg-primary rounded-lg shadow-sm border border-secondary/80 cursor-pointer hover:bg-transparent transition-colors">
-                <AlignJustify className="w-6 h-6 text-secondary" />
-            </button>
 
             {/* Right */}
             <nav>

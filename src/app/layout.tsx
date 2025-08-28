@@ -3,14 +3,14 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 // CSS
 import "./globals.css";
+// Types
+import { LocationCookieData } from "@/types";
 // Providers
 import { GlobalProvider } from "@/providers/GlobalProvider";
 import { LocationProvider } from "@/providers/LocationProvider";
 // Components
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-// Types
-import { LocationCookieData } from "@/types";
 
 // Metadata
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ export default function RootLayout({
       <body>
         <LocationProvider initialLocation={locationCookieData}>
 
-          {/* All childre wrapped inside GlobalProvider */}
+          {/* All children wrapped inside GlobalProvider */}
           <GlobalProvider>
             {/* Header */}
             <Header />

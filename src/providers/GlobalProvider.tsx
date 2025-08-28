@@ -3,6 +3,8 @@
 // Imports
 import React, { createContext, ReactNode, useContext, useState } from "react"
 import { usePathname } from "next/navigation";
+// Provider
+import { SessionProvider } from "next-auth/react";
 // Components
 import Loader from "@/components/Loader";
 
@@ -37,8 +39,12 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
             {isLoading &&
                 <Loader fullscreen={true} />
             }
-            {/* Children Components */}
-            {children}
+
+            {/* Session Provider */}
+            <SessionProvider>
+                {/* Children Components */}
+                {children}
+            </SessionProvider>
         </GlobalContext.Provider>
     );
 }
