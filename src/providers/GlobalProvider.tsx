@@ -7,12 +7,16 @@ import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 // Components
 import Loader from "@/components/Loader";
+import SigninPopup from "@/components/SigninPopup";
+import CreatetagPopup from "@/components/CreatetagPopup";
 
 // Interfaces
 interface GloabalProvider {
     pathname: string;
     isLoading: boolean;
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsSigninPopup: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsCreateTagPop: React.Dispatch<React.SetStateAction<boolean>>;
 }
 interface GlobalProviderProps {
     children: ReactNode;
@@ -28,16 +32,32 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     // States
     // Loader state to triger main loader
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    // Popup screen state for signin
+    const [isSigninPop, setIsSigninPopup] = useState(false);
+    // Popup screen state for tag-creation
+    const [isCreateTagPop, setIsCreateTagPop] = useState(false);
 
     return (
         <GlobalContext.Provider value={{
             pathname,
             isLoading,
             setIsLoading,
+            setIsSigninPopup,
+            setIsCreateTagPop,
         }}>
             {/* Global Loader */}
             {isLoading &&
                 <Loader fullscreen={true} />
+            }
+
+            {/* Signin Screen Popup */}
+            {isSigninPop &&
+                <SigninPopup />
+            }
+
+            {/* Create-tag Screen Popup */}
+            {isCreateTagPop &&
+                <CreatetagPopup />
             }
 
             {/* Session Provider */}
@@ -45,7 +65,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
                 {/* Children Components */}
                 {children}
             </SessionProvider>
-        </GlobalContext.Provider>
+        </GlobalContext.Provider >
     );
 }
 
