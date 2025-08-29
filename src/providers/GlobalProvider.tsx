@@ -8,7 +8,7 @@ import { SessionProvider } from "next-auth/react";
 // Components
 import Loader from "@/components/Loader";
 import SigninPopup from "@/components/SigninPopup";
-import CreatetagPopup from "@/components/CreatetagPopup";
+import CreateTagPopup from "@/components/CreateTagPopup";
 
 // Interfaces
 interface GloabalProvider {
@@ -57,7 +57,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
 
             {/* Create-tag Screen Popup */}
             {isCreateTagPop &&
-                <CreatetagPopup />
+                <CreateTagPopup />
             }
 
             {/* Session Provider */}
