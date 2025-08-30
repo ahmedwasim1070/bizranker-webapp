@@ -56,7 +56,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
             }
 
             {/* Create-tag Screen Popup */}
-            {isCreateTagPop &&
+            {true &&
                 <CreateTagPopup />
             }
 

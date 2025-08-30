@@ -137,7 +137,7 @@ function CreateTagPopup() {
 
                     {/*  */}
                     <button disabled={disableSubmit || isSubmiting} type="submit" className="bg-primary border-2 border-primary text-center rounded-lg w-full py-2 text-white font-semibold enabled:hover:bg-transparent transition-colors enabled:cursor-pointer enabled:hover:text-primary disabled:bg-primary/10">
-                        {true ? <Loader className="py-1" /> : 'Add Tag'}
+                        {isSubmiting ? <Loader className="py-1" dotSize="3" /> : 'Add Tag'}
                     </button>
                 </form>
 
